@@ -239,18 +239,10 @@ function parseTasks(raw){
 }
 function init(){
   ss('載入中…');
-  // Read via public CSV export (no auth needed)
-  fetch(CSV)
-    .then(r=>{if(!r.ok)throw new Error('csv fail');return r.text();})
-    .then(csv=>{
-      // CSV has one cell A1 containing the JSON string
-      // Strip surrounding quotes if present and unescape
-      let raw=csv.trim();
-      // Google Sheets CSV wraps cells with commas/quotes in double-quotes
-      // and doubles internal double-quotes
-      if(raw.startsWith('"')&&raw.endsWith('"')){
-        raw=raw.slice(1,-1).replace(/""/g,'"');
-      }
+  fetch(API+'?action=read')
+    .then(r=>{if(!r.ok)throw new Error('fail');return r.text();})
+    .then(raw=>{
+      raw=raw.trim();
       if(raw&&raw!=='[]'&&raw.startsWith('[')){
         tasks=parseTasks(raw);
         try{localStorage.setItem(SK,raw);}catch(e){}
