@@ -74,6 +74,9 @@ button:hover{background:#f0eeea;}
 .bu{color:#3B6D11;border-color:#97C459;}
 .er{display:flex;align-items:center;gap:8px;margin-top:8px;padding-top:8px;border-top:0.5px solid #eee;flex-wrap:wrap;}
 .er label{font-size:11px;color:#888;white-space:nowrap;}
+.note-input{font-size:11px;padding:2px 6px;border-radius:6px;border:0.5px solid #e0e0e0;background:#fafafa;color:#666;width:100%;margin-top:3px;outline:none;}
+.note-input:focus{border-color:#378ADD;}
+.note-input::placeholder{color:#ccc;}
 .er input[type=range]{flex:1;min-width:80px;}
 .er input[type=number]{width:58px;font-size:12px;padding:3px 6px;border-radius:6px;border:0.5px solid #ccc;background:#fafafa;color:#1a1a1a;text-align:center;}
 .cfm{background:#fff3cd;border:0.5px solid #EF9F27;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:#633806;display:flex;align-items:center;gap:10px;}
@@ -205,12 +208,12 @@ const DF=[
 
 const API='https://script.google.com/macros/s/AKfycby76QenFGRUIJeA7wj-rX2MkmVLYRmEG7euRsIeCgDlHuFgnfkbadvAanJFSFwX2Z0T0Q/exec';
 const CSV='https://docs.google.com/spreadsheets/d/10yGuvuAUTDg_MlpqhsjwoCZeEKaHE6D2FUwAakfatbc/export?format=csv&gid=0';
-let tasks=[],timers={},filt='all',dsUid=null,uc=0,bIdx=0,bSec=SW,bIv=null,bPaused=false,saveTimer=null;
+let tasks=[],timers={},filt='all',dsUid=null,uc=0,bIdx=0,bSec=SW,bIv=null,bPaused=false,saveTimer=null,noteTimer=null;
 function uid(){return ++uc;}
 function fmt(s){const m=Math.floor(Math.max(s,0)/60),sc=Math.max(s,0)%60;return String(m).padStart(2,'0')+':'+String(sc).padStart(2,'0');}
 function ss(m){const e=document.getElementById('status');if(e)e.textContent=m;}
 function dataPayload(){
-  return JSON.stringify(tasks.map(t=>({uid:t.uid,name:t.name,mins:t.mins,cat:t.cat,left:t.left,priority:t.priority,rank:t.rank||'',grp:t.grp||'',eliminated:!!t.eliminated,origNum:t.origNum||null})));
+  return JSON.stringify(tasks.map(t=>({uid:t.uid,name:t.name,mins:t.mins,cat:t.cat,left:t.left,priority:t.priority,rank:t.rank||'',grp:t.grp||'',eliminated:!!t.eliminated,origNum:t.origNum||null,note:t.note||''})));
 }
 function save(){
   const d=dataPayload();
@@ -234,12 +237,12 @@ function parseTasks(raw){
     const u=t.uid||uid(); if(u>uc)uc=u;
     return{...t,uid:u,state:'idle',editOpen:false,
       rank:t.rank!==undefined&&t.rank!==''?String(t.rank):String(origNum||i+1),
-      grp,eliminated:!!t.eliminated,origNum};
+      grp,eliminated:!!t.eliminated,origNum,note:t.note||''};
   });
 }
 function init(){
   ss('載入中…');
-  fetch(API+'?action=read')
+  fetch(API)
     .then(r=>{if(!r.ok)throw new Error('fail');return r.text();})
     .then(raw=>{
       raw=raw.trim();
@@ -266,11 +269,11 @@ function loadLocal(){
       tasks=parseTasks(raw);
       ss('已從本機快取載入。（離線模式）');
     }else{
-      tasks=DF.map((t,i)=>({...t,uid:uid(),left:t.mins*60,state:'idle',editOpen:false,rank:String(t.origNum||i+1),eliminated:false,origNum:t.origNum||null}));
+      tasks=DF.map((t,i)=>({...t,uid:uid(),left:t.mins*60,state:'idle',editOpen:false,rank:String(t.origNum||i+1),eliminated:false,origNum:t.origNum||null,note:''}));
       save();ss('首次載入預設清單。');
     }
   }catch(e){
-    tasks=DF.map((t,i)=>({...t,uid:uid(),left:t.mins*60,state:'idle',editOpen:false,rank:String(t.origNum||i+1),eliminated:false,origNum:t.origNum||null}));
+    tasks=DF.map((t,i)=>({...t,uid:uid(),left:t.mins*60,state:'idle',editOpen:false,rank:String(t.origNum||i+1),eliminated:false,origNum:t.origNum||null,note:''}));
     ss('無法存取儲存空間。');
   }
 }
@@ -314,6 +317,7 @@ function applyRanks(){
   tasks=[...ra,...un];save();render();ss('排名已套用。');
 }
 function sRank(u,v){const t=tasks.find(x=>x.uid===u);if(t)t.rank=v.trim();}
+function setNote(u,v){const t=tasks.find(x=>x.uid===u);if(t){t.note=v;if(noteTimer)clearTimeout(noteTimer);noteTimer=setTimeout(()=>save(),1000);}}
 function togElim(u){
   const t=tasks.find(x=>x.uid===u);if(!t)return;
   if(!t.eliminated){if(timers[u]){clearInterval(timers[u]);delete timers[u];}t.state='idle';}
@@ -357,6 +361,8 @@ function render(){
         <div class="ti">
           <div class="tn${t.eliminated?' eli':''}">${t.name}</div>
           <div class="tm"><span>預估 ${t.mins} 分鐘</span>${gl?`<span class="tg ${gc}">${gl}</span>`:''}</div>
+          <input class="note-input" type="text" maxlength="20" placeholder="備註…" value="${t.note||''}"
+            oninput="setNote(${u},this.value)" onclick="event.stopPropagation()" ondragstart="event.stopPropagation()">
         </div>
         <div class="bg">
           ${t.eliminated?'<span class="tg-eli">剔除</span>':t.priority?'<span class="tg-pri">優先</span>':''}
@@ -384,7 +390,7 @@ function render(){
   document.getElementById('summary').textContent=`顯示 ${vis.length} / 共 ${tasks.filter(t=>!t.eliminated).length} 項，優先 ${pri}，剔除 ${eli}`;
 }
 function askRestore(){document.getElementById('cfmArea').innerHTML=`<div class="cfm"><span>確定還原全部預設清單？你刪除的項目會全部回來。</span><button class="bu" onclick="doRes()">確定還原</button><button onclick="document.getElementById('cfmArea').innerHTML=''">取消</button></div>`;}
-function doRes(){Object.values(timers).forEach(clearInterval);timers={};tasks=DF.map((t,i)=>({...t,uid:uid(),left:t.mins*60,state:'idle',editOpen:false,rank:String(i+1),eliminated:false}));save();document.getElementById('cfmArea').innerHTML='';ss('已還原。');render();}
+function doRes(){Object.values(timers).forEach(clearInterval);timers={};tasks=DF.map((t,i)=>({...t,uid:uid(),left:t.mins*60,state:'idle',editOpen:false,rank:String(i+1),eliminated:false,note:''}));save();document.getElementById('cfmArea').innerHTML='';ss('已還原。');render();}
 function sr2(u){const n=document.getElementById('nn'+u),r=document.getElementById('rr'+u);if(n&&r)r.value=n.value;}
 function sn2(u){const n=document.getElementById('nn'+u),r=document.getElementById('rr'+u);if(n&&r)n.value=r.value;}
 function te2(u){const t=tasks.find(x=>x.uid===u);if(t){t.editOpen=!t.editOpen;render();}}
