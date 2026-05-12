@@ -296,12 +296,14 @@ function bigRender(){
   document.getElementById('bigDots').innerHTML=CK.map((k2,i)=>`<div class="bdot${i===bIdx?' act':''}" style="background:${i===bIdx?CM[k2].color:'#ddd'};" onclick="jc(${i})" title="${CM[k2].label}"></div>`).join('');
   // 同步篩選列：大計時器切換時，篩選列跟著切到同一分類
   const curGrp=CK[bIdx];
-  filt=curGrp;
-  document.querySelectorAll('.fb').forEach(b=>{
-    const isMatch=b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+curGrp+"'");
-    b.classList.toggle('act',isMatch);
-  });
-  render();
+  if(filt!==curGrp){
+    filt=curGrp;
+    document.querySelectorAll('.fb').forEach(b=>{
+      const isMatch=b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+curGrp+"'");
+      b.classList.toggle('act',isMatch);
+    });
+    render();
+  }
 }
 function jc(i){bIdx=i;bSec=SW;bigRender();}
 function toggleBigPause(){
@@ -324,6 +326,9 @@ function togElim(u){
   t.eliminated=!t.eliminated;save();render();
 }
 function render(){
+  // Don't re-render if a note input is focused (would disrupt typing)
+  const focused=document.activeElement;
+  if(focused&&focused.classList.contains('note-input'))return;
   const list=document.getElementById('list');list.innerHTML='';
   const vis=tasks.filter(t=>{
     if(filt==='eliminated')return t.eliminated;
