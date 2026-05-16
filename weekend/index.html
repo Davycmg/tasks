@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>任務倒數計時器</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏱️</text></svg>">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f0;color:#1a1a1a;padding:1rem;}
+.big-wrap{background:#fff;border:0.5px solid #ddd;border-radius:0 0 16px 16px;padding:1.2rem 1.5rem;margin-bottom:1rem;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.big-top{display:flex;align-items:center;gap:1rem;}
+.big-dot-lg{width:14px;height:14px;border-radius:50%;flex-shrink:0;}
+.big-info{flex:1;min-width:0;}
+.big-label{font-size:12px;color:#aaa;margin-bottom:2px;}
+.big-name{font-size:17px;font-weight:500;color:#1a1a1a;}
+.big-sub{font-size:12px;color:#888;margin-top:2px;}
+.big-time{font-size:44px;font-weight:600;font-variant-numeric:tabular-nums;color:#1a1a1a;flex-shrink:0;letter-spacing:1px;}
+.big-time.urgent{color:#E24B4A;}
+.big-bar-wrap{height:4px;background:#eee;border-radius:2px;overflow:hidden;margin-top:.75rem;}
+.big-bar{height:100%;background:#378ADD;border-radius:2px;transition:width .5s linear;}
+.big-dots{display:flex;gap:5px;flex-wrap:wrap;margin-top:.5rem;}
+.bdot{width:8px;height:8px;border-radius:50%;background:#ddd;cursor:pointer;transition:all .2s;}
+.bdot.act{width:20px;border-radius:4px;}
+h1{font-size:15px;font-weight:500;color:#444;margin-bottom:.5rem;}
+.global-row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;}
+.summary{font-size:12px;color:#888;margin-left:auto;}
+.sbar{font-size:11px;color:#888;margin-bottom:8px;min-height:16px;}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-bottom:10px;font-size:11px;color:#888;}
+.li{display:flex;align-items:center;gap:4px;}
+.ldot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+.fr{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.fb{font-size:11px;padding:3px 10px;border-radius:20px;border:0.5px solid #ccc;background:transparent;color:#555;cursor:pointer;}
+.fb.act{background:#1a1a1a;color:#fff;border-color:#1a1a1a;}
+.tc{background:#fff;border:0.5px solid #ddd;border-radius:12px;padding:10px 12px;margin-bottom:6px;}
+.tc.pri{background:#fffbf0;border:1.5px solid #EF9F27;}
+.tc.run{border-color:#999;}
+.tc.dn{opacity:0.4;}
+.tc.eli{background:#f8f8f8;}
+.tc.dov{border-top:2.5px solid #378ADD;}
+.tc.drg{opacity:.45;}
+.mr{display:flex;align-items:center;gap:8px;}
+.dh{color:#bbb;font-size:15px;cursor:grab;flex-shrink:0;padding:0 2px;}
+.ri{width:36px;font-size:12px;padding:3px 4px;border-radius:6px;border:0.5px solid #ccc;background:#fafafa;color:#444;text-align:center;flex-shrink:0;}
+.ri:focus{outline:none;border-color:#378ADD;}
+.cb{width:4px;border-radius:2px;align-self:stretch;flex-shrink:0;min-height:34px;}
+.ti{flex:1;min-width:0;}
+.tn{font-size:13px;font-weight:500;color:#1a1a1a;line-height:1.4;}
+.tn.eli{text-decoration:line-through;color:#aaa;}
+.tm{font-size:11px;color:#888;margin-top:2px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.bg{display:flex;gap:4px;align-items:center;flex-shrink:0;flex-wrap:wrap;}
+.tg{font-size:10px;padding:2px 6px;border-radius:10px;white-space:nowrap;}
+.tg-red{background:#FCEBEB;color:#791F1F;}
+.tg-amber{background:#FAEEDA;color:#633806;}
+.tg-blue{background:#E6F1FB;color:#0C447C;}
+.tg-green{background:#EAF3DE;color:#27500A;}
+.tg-pri{background:#EF9F27;color:#fff;font-weight:600;font-size:10px;padding:2px 7px;border-radius:10px;}
+.tg-eli{background:#fee2e2;color:#991b1b;font-weight:600;font-size:10px;padding:2px 7px;border-radius:10px;}
+.cg-pray{background:#EDE9FE;color:#4C1D95;}
+.cg-church{background:#FDE8FF;color:#6B21A8;}
+.cg-council{background:#FEF3C7;color:#92400E;}
+.cg-tech{background:#DBEAFE;color:#1E3A8A;}
+.cg-family{background:#FFE4E6;color:#881337;}
+.cg-admin{background:#F1F5F9;color:#334155;}
+.td{font-size:17px;font-weight:500;font-variant-numeric:tabular-nums;min-width:56px;text-align:right;color:#1a1a1a;flex-shrink:0;}
+.td.urg{color:#E24B4A;}
+.td.eli{color:#ccc;}
+.br{display:flex;gap:4px;flex-shrink:0;flex-wrap:wrap;}
+button{font-size:11px;padding:3px 8px;border-radius:6px;border:0.5px solid #ccc;background:transparent;color:#555;cursor:pointer;line-height:1.4;}
+button:hover{background:#f0eeea;}
+.bs{color:#185FA5;border-color:#85B7EB;}
+.bp{color:#BA7517;border-color:#EF9F27;}
+.bd{color:#A32D2D;border-color:#F09595;}
+.be{color:#991b1b;border-color:#fca5a5;}
+.bu{color:#3B6D11;border-color:#97C459;}
+.er{display:flex;align-items:center;gap:8px;margin-top:8px;padding-top:8px;border-top:0.5px solid #eee;flex-wrap:wrap;}
+.er label{font-size:11px;color:#888;white-space:nowrap;}
+.note-input{font-size:11px;padding:2px 6px;border-radius:6px;border:0.5px solid #e0e0e0;background:#fafafa;color:#666;width:100%;margin-top:3px;outline:none;}
+.note-input:focus{border-color:#378ADD;}
+.note-input::placeholder{color:#ccc;}
+.er input[type=range]{flex:1;min-width:80px;}
+.er input[type=number]{width:58px;font-size:12px;padding:3px 6px;border-radius:6px;border:0.5px solid #ccc;background:#fafafa;color:#1a1a1a;text-align:center;}
+.cfm{background:#fff3cd;border:0.5px solid #EF9F27;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:#633806;display:flex;align-items:center;gap:10px;}
+.cfm span{flex:1;}
+</style>
+</head>
+<body>
+<div class="big-wrap">
+  <div class="big-top">
+    <div class="big-dot-lg" id="bigDot"></div>
+    <div class="big-info">
+      <div class="big-label">目前聚焦分類（每5分鐘切換，可點下方圓點跳轉）</div>
+      <div class="big-name" id="bigName">—</div>
+      <div class="big-sub" id="bigSub"></div>
+    </div>
+    <div class="big-time" id="bigTime">05:00</div>
+  </div>
+  <div class="big-bar-wrap"><div class="big-bar" id="bigBar" style="width:0%"></div></div>
+  <div style="display:flex;align-items:center;gap:8px;margin-top:.5rem;">
+    <div class="big-dots" id="bigDots" style="flex:1;"></div>
+    <button id="bigPauseBtn" onclick="toggleBigPause()" style="font-size:11px;padding:3px 10px;border-radius:20px;border:0.5px solid #ccc;color:#555;background:transparent;cursor:pointer;flex-shrink:0;">⏸ 暫停切換</button>
+  </div>
+</div>
+
+<h1>任務倒數計時器</h1>
+<div class="legend">
+  <div class="li"><span class="ldot" style="background:#E24B4A;"></span>重點</div>
+  <div class="li"><span class="ldot" style="background:#EF9F27;"></span>重要</div>
+  <div class="li"><span class="ldot" style="background:#378ADD;"></span>一般</div>
+  <div class="li"><span class="ldot" style="background:#639922;"></span>備忘</div>
+  <div class="li"><span style="background:#EF9F27;color:#fff;font-size:10px;padding:1px 6px;border-radius:8px;font-weight:600;">優先</span>&nbsp;建議優先</div>
+  <div class="li" style="color:#bbb;">⠿ 拖曳 | # 排名後按套用</div>
+</div>
+<div class="fr">
+  <button class="fb act" onclick="sf('all',this)">全部</button>
+  <button class="fb" onclick="sf('pray',this)">🌱 成長</button>
+  <button class="fb" onclick="sf('church',this)">🤝 社群</button>
+  <button class="fb" onclick="sf('family',this)">🏠 生活</button>
+  <button class="fb" onclick="sf('eliminated',this)">🗑️ 剔除</button>
+</div>
+<div class="global-row">
+  <button onclick="startAll()">全部開始</button>
+  <button onclick="pauseAll()">全部暫停</button>
+  <button onclick="resetAll()">全部重置</button>
+  <button onclick="applyRanks()">套用排名</button>
+  <button class="bd" onclick="askRestore()">還原預設清單</button>
+  <span class="summary" id="summary"></span>
+</div>
+<div id="cfmArea"></div>
+<div class="sbar" id="status"></div>
+<div id="list"></div>
+
+<script>
+const SK='david-tasks-stable';
+const CM={
+  pray:{label:'🌱 成長',color:'#7C3AED',cls:'cg-pray'},
+  church:{label:'🤝 社群',color:'#9333EA',cls:'cg-church'},
+  family:{label:'🏠 生活',color:'#E11D48',cls:'cg-family'},
+};
+const CK=Object.keys(CM);
+const CC={red:'#E24B4A',amber:'#EF9F27',blue:'#378ADD',green:'#639922'};
+const CL={red:'重點',amber:'重要',blue:'一般',green:'備忘'};
+const SW=300;
+
+const DF=[
+  {name:"好習慣：按照最後往來的年份來整理 Line 好友，可以看到最新新增",mins:5,cat:"green",priority:false,grp:"family",origNum:1},
+  {name:"家裡：冷氣濾網 3/28 看還 ok 主臥室",mins:5,cat:"green",priority:false,grp:"family",origNum:2},
+  {name:"家庭時間＋安息日蠟燭、領聖餐，敬拜先用 YT，避免小孩吵架分心，時間好像要檢討何時點蠟燭",mins:20,cat:"amber",priority:false,grp:"family",origNum:3},
+  {name:"放假：記得去看阿嬤",mins:5,cat:"green",priority:false,grp:"family",origNum:4},
+  {name:"娃娃跟小朋友溝通全部改到阿嬤家，5/31 清洗娃娃",mins:10,cat:"green",priority:false,grp:"family",origNum:5},
+  {name:"剪頭髮 3/23 換線",mins:5,cat:"green",priority:false,grp:"family",origNum:6},
+  {name:"我們家的小孩會背誦 Shema，把聖經寫成歌曲",mins:15,cat:"amber",priority:false,grp:"pray",origNum:7},
+  {name:"電影之夜：心裡的聲音、狸想世界、動物方城市 2",mins:10,cat:"green",priority:false,grp:"family",origNum:8},
+  {name:"週末跟安祺的 RPG 要安排",mins:10,cat:"blue",priority:false,grp:"pray",origNum:9},
+  {name:"房間收納櫃兩 Salma 整理然後歸到倉庫",mins:20,cat:"green",priority:false,grp:"family",origNum:10},
+  {name:"整理音響兩旁的雜誌架",mins:15,cat:"green",priority:false,grp:"family",origNum:11},
+  {name:"用十誡和七釋放禱告每週，納入家庭時光：神真舒服，背負自",mins:15,cat:"amber",priority:false,grp:"pray",origNum:12},
+  {name:"聖經考試要預備，要知道要考啥",mins:15,cat:"amber",priority:false,grp:"pray",origNum:13},
+  {name:"安裝女兒房間櫃子的支撐架，要買鐵片，小北",mins:15,cat:"green",priority:false,grp:"family",origNum:14},
+  {name:"帶孩子去騎腳踏車，要帶水",mins:10,cat:"green",priority:false,grp:"family",origNum:15},
+  {name:"不要再為了小朋友的考試破壞週末的步調安息日等等，是 4/17，問小孩如何幫助",mins:10,cat:"amber",priority:false,grp:"family",origNum:16},
+  {name:"家庭會議：安排小朋友睡午覺的時間",mins:15,cat:"amber",priority:false,grp:"family",origNum:17},
+  {name:"大衛包森加上聖經馬拉松",mins:20,cat:"amber",priority:false,grp:"pray",origNum:18},
+  {name:"枕頭套要每一個禮拜清洗：0503 全套清洗",mins:5,cat:"green",priority:false,grp:"family",origNum:19},
+  {name:"為年度命名禱告，全家一起",mins:10,cat:"green",priority:false,grp:"pray",origNum:20},
+  {name:"要帶水，跟哥哥一起打樂樂棒球，主日傍晚，我先陪嘟嘟玩滑板車，哥哥再打球",mins:15,cat:"green",priority:false,grp:"family",origNum:21},
+  {name:"駿宏帶著穆勒聖經綜覽班，大衛可以帶著嘟嘟",mins:20,cat:"blue",priority:false,grp:"church",origNum:22},
+  {name:"帶孩子一起來聽五五重職分，CD 要先預備好，把 mp3 輸出，放佈道家 CD 進去包包",mins:20,cat:"amber",priority:false,grp:"church",origNum:23},
+  {name:"尋求上帝怎麼樣幫助孩子在家庭時光敞開分享，多找幾個破冰談話遊戲",mins:15,cat:"amber",priority:false,grp:"family",origNum:24},
+  {name:"小朋友晨禱聽聖經要戴耳機：設定行程",mins:10,cat:"green",priority:false,grp:"family",origNum:25},
+  {name:"全家一起看 CBN NEWS",mins:15,cat:"green",priority:false,grp:"family",origNum:26},
+  {name:"看大鮑和布永康烈火特會",mins:20,cat:"green",priority:false,grp:"pray",origNum:27},
+  {name:"在家裡行走禱告",mins:10,cat:"green",priority:false,grp:"pray",origNum:28},
+  {name:"哥哥還有弟弟可以去公園玩遙控汽車",mins:10,cat:"green",priority:false,grp:"family",origNum:29},
+  {name:"哥哥錯別字，要往前翻",mins:10,cat:"green",priority:false,grp:"family",origNum:30},
+  {name:"帶慕潔的徐同學來三蘆家庭關懷中心，我當主禮會有困難",mins:20,cat:"amber",priority:false,grp:"church",origNum:31},
+  {name:"程式碼跟哥哥和妹妹交通",mins:15,cat:"amber",priority:false,grp:"church",origNum:32},
+  {name:"整理家中的紙類",mins:15,cat:"green",priority:false,grp:"family",origNum:33},
+  {name:"週六晨禱記得帶樂樂棒球",mins:5,cat:"green",priority:false,grp:"pray",origNum:34},
+  {name:"去參加早晨禱告要記得帶腳踏車架，前一天要準備好",mins:10,cat:"green",priority:false,grp:"pray",origNum:35},
+  {name:"去公園要帶防蚊液，帶著小太陽在土公園玩滑板車是去大都會的替代方案，我在後面騎腳踏車追她",mins:10,cat:"green",priority:false,grp:"family",origNum:36},
+  {name:"要來預備母親節感念文，哥哥生日",mins:20,cat:"amber",priority:false,grp:"family",origNum:37},
+  {name:"幫小孩印數學考卷",mins:5,cat:"green",priority:false,grp:"family",origNum:38},
+  {name:"要帶女兒去吃飯",mins:30,cat:"green",priority:false,grp:"family",origNum:39},
+  {name:"家庭時間要考慮孩子的體力，下午消耗太多會很累",mins:10,cat:"amber",priority:false,grp:"family",origNum:40},
+  {name:"線上桌遊",mins:15,cat:"green",priority:false,grp:"family",origNum:41},
+  {name:"週末要設定睡覺時間",mins:5,cat:"green",priority:false,grp:"family",origNum:42},
+  {name:"整理安祺任務",mins:15,cat:"amber",priority:false,grp:"church",origNum:43},
+  {name:"帶嘟嘟去跑操場，要帶水",mins:10,cat:"green",priority:false,grp:"family",origNum:44},
+  {name:"問守愚：啟發的討論時間也分組？為 RPG 預備，Albert 他們華碩，有一個 Excel",mins:20,cat:"blue",priority:false,grp:"church",origNum:45},
+  {name:"王大哥教會可以邀請守愚來培訓",mins:15,cat:"blue",priority:false,grp:"church",origNum:46},
+  {name:"家裡所有東西都貼姓名貼",mins:20,cat:"green",priority:false,grp:"family",origNum:47},
+  {name:"買音樂軟體給慕潔",mins:10,cat:"green",priority:false,grp:"church",origNum:48},
+  {name:"要找說明主日重要性的影片",mins:10,cat:"green",priority:false,grp:"church",origNum:49},
+  {name:"NotebookLM 2026 大更新｜新的內容應用有空補課一下",mins:30,cat:"blue",priority:false,grp:"church",origNum:50},
+  {name:"https://www.goodtv.tv/watch?episode=115809",mins:20,cat:"green",priority:false,grp:"pray",origNum:51},
+  {name:"衣服要換季",mins:20,cat:"green",priority:false,grp:"family",origNum:52},
+  {name:"哥哥和嘟嘟可以去學校操場玩綠色西瓜氣球",mins:5,cat:"green",priority:false,grp:"family",origNum:53},
+  {name:"看蜜蜂之謎",mins:20,cat:"green",priority:false,grp:"family",origNum:54},
+  {name:"星期天下午或早上，三蘆有電鋼琴可以敬拜",mins:15,cat:"green",priority:false,grp:"church",origNum:55},
+  {name:"3白1黑 Kallax 檯面整理",mins:20,cat:"green",priority:false,grp:"family",origNum:56},
+  {name:"孩子的物品都貼上姓名貼",mins:10,cat:"green",priority:false,grp:"family",origNum:57},
+  {name:"幫哥哥姐姐買英文單字卡",mins:10,cat:"green",priority:false,grp:"family",origNum:58},
+  {name:"黃昱愷 曹芷瑄 郭芯羽排擠女 陳思儒 吳芯語",mins:20,cat:"amber",priority:false,grp:"family",origNum:59},
+  {name:"可以多一點去爸爸家，媽媽可以去 17 樓",mins:10,cat:"green",priority:false,grp:"family",origNum:60},
+  {name:"可以跟孩子玩戰鬥陀螺",mins:10,cat:"green",priority:false,grp:"family",origNum:61},
+  {name:"爸爸家需要 Chrome Cast",mins:10,cat:"green",priority:false,grp:"family",origNum:62},
+  {name:"禱告，獨立帶啟發的同工興起，銓興",mins:10,cat:"green",priority:false,grp:"pray",origNum:63},
+  {name:"跨組要協調的東西，答案要出來",mins:15,cat:"amber",priority:false,grp:"church",origNum:64},
+  {name:"晨禱和主日小朋友的番茄鐘要更新",mins:15,cat:"amber",priority:false,grp:"church",origNum:65},
+  {name:"彩虹愛家課程時間",mins:10,cat:"amber",priority:false,grp:"church",origNum:66},
+  {name:"週末晚上的時間全家討論",mins:10,cat:"green",priority:false,grp:"family",origNum:67},
+  {name:"帶著小朋友來幫風扇潤滑",mins:10,cat:"green",priority:false,grp:"family",origNum:68},
+  {name:"我會帶著孩子做菜，蒸蛋等等",mins:15,cat:"green",priority:false,grp:"family",origNum:69},
+  {name:"可以的呼召：晨禱",mins:10,cat:"green",priority:false,grp:"pray",origNum:70},
+  {name:"每天用 5S 來檢核",mins:5,cat:"green",priority:false,grp:"family",origNum:71},
+  {name:"劉先生明天會告知估價結果，並提及鼠患已使多戶電線破皮，有安全疑慮",mins:15,cat:"amber",priority:false,grp:"family",origNum:72},
+  {name:"電影：Social Dilemma",mins:20,cat:"green",priority:false,grp:"family",origNum:73},
+];
+
+const API='https://script.google.com/macros/s/AKfycby76QenFGRUIJeA7wj-rX2MkmVLYRmEG7euRsIeCgDlHuFgnfkbadvAanJFSFwX2Z0T0Q/exec';
+const CSV='https://docs.google.com/spreadsheets/d/10yGuvuAUTDg_MlpqhsjwoCZeEKaHE6D2FUwAakfatbc/export?format=csv&gid=0';
+let tasks=[],timers={},filt='all',dsUid=null,uc=0,bIdx=0,bSec=SW,bIv=null,bPaused=false,saveTimer=null,noteTimer=null;
+function uid(){return ++uc;}
+function fmt(s){const m=Math.floor(Math.max(s,0)/60),sc=Math.max(s,0)%60;return String(m).padStart(2,'0')+':'+String(sc).padStart(2,'0');}
+function ss(m){const e=document.getElementById('status');if(e)e.textContent=m;}
+function dataPayload(){
+  return JSON.stringify(tasks.map(t=>({uid:t.uid,name:t.name,mins:t.mins,cat:t.cat,left:t.left,priority:t.priority,rank:t.rank||'',grp:t.grp||'',eliminated:!!t.eliminated,origNum:t.origNum||null,note:t.note||''})));
+}
+function save(){
+  const d=dataPayload();
+  // always write localStorage as fallback
+  try{localStorage.setItem(SK,d);}catch(e){}
+  // debounce cloud write: wait 1.5s after last change
+  if(saveTimer) clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>{
+    fetch(API,{method:'POST',body:d,mode:'no-cors'})
+      .then(()=>ss('已同步至雲端 ✓'))
+      .catch(()=>ss('雲端同步失敗，已存本機。'));
+  },1500);
+}
+function parseTasks(raw){
+  const p=JSON.parse(raw);
+  const hg=p.length>0&&p[0].grp&&p[0].grp!=='';
+  return p.map((t,i)=>{
+    const dfMatch=DF.find(d=>d.name===t.name);
+    const grp=(hg&&t.grp)?t.grp:(dfMatch||{grp:''}).grp;
+    const origNum=t.origNum||(dfMatch?dfMatch.origNum:null)||null;
+    const u=t.uid||uid(); if(u>uc)uc=u;
+    return{...t,uid:u,state:'idle',editOpen:false,
+      rank:t.rank!==undefined&&t.rank!==''?String(t.rank):String(origNum||i+1),
+      grp,eliminated:!!t.eliminated,origNum,note:t.note||''};
+  });
+}
+function init(){
+  ss('載入中…');
+  fetch(API)
+    .then(r=>{if(!r.ok)throw new Error('fail');return r.text();})
+    .then(raw=>{
+      raw=raw.trim();
+      if(raw&&raw!=='[]'&&raw.startsWith('[')){
+        tasks=parseTasks(raw);
+        try{localStorage.setItem(SK,raw);}catch(e){}
+        ss('已從雲端載入。');
+      } else {
+        loadLocal();
+      }
+    })
+    .catch(()=>{
+      ss('雲端無法連線，從本機載入…');
+      loadLocal();
+    })
+    .finally(()=>{
+      bIv=setInterval(bigTick,1000);bigRender();render();
+    });
+}
+function loadLocal(){
+  try{
+    const raw=localStorage.getItem(SK);
+    if(raw){
+      tasks=parseTasks(raw);
+      ss('已從本機快取載入。（離線模式）');
+    }else{
+      tasks=DF.map((t,i)=>({...t,uid:uid(),left:t.mins*60,state:'idle',editOpen:false,rank:String(t.origNum||i+1),eliminated:false,origNum:t.origNum||null,note:''}));
+      save();ss('首次載入預設清單。');
+    }
+  }catch(e){
+    tasks=DF.map((t,i)=>({...t,uid:uid(),left:t.mins*60,state:'idle',editOpen:false,rank:String(t.origNum||i+1),eliminated:false,origNum:t.origNum||null,note:''}));
+    ss('無法存取儲存空間。');
+  }
+}
+function bigTick(){
+  if(bPaused)return;
+  bSec--;if(bSec<=0){bIdx=(bIdx+1)%CK.length;bSec=SW;}
+  bigRender();
+}
+function bigRender(){
+  const k=CK[bIdx],m=CM[k];
+  const ct=tasks.filter(t=>!t.eliminated&&t.grp===k);
+  const dn=ct.filter(t=>t.left===0||t.state==='done').length;
+  const rn=ct.filter(t=>t.state==='running').length;
+  document.getElementById('bigDot').style.background=m.color;
+  document.getElementById('bigName').textContent=m.label;
+  document.getElementById('bigSub').textContent=ct.length>0?`${dn}/${ct.length} 完成${rn>0?'，'+rn+' 進行中':''}`:' 無任務';
+  const te=document.getElementById('bigTime');
+  te.textContent=fmt(bSec);te.className='big-time'+(bSec<60?' urgent':'');
+  document.getElementById('bigBar').style.width=Math.round((1-bSec/SW)*100)+'%';
+  document.getElementById('bigDots').innerHTML=CK.map((k2,i)=>`<div class="bdot${i===bIdx?' act':''}" style="background:${i===bIdx?CM[k2].color:'#ddd'};" onclick="jc(${i})" title="${CM[k2].label}"></div>`).join('');
+  // 同步篩選列：大計時器切換時，篩選列跟著切到同一分類
+  const curGrp=CK[bIdx];
+  if(filt!==curGrp){
+    filt=curGrp;
+    document.querySelectorAll('.fb').forEach(b=>{
+      const isMatch=b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+curGrp+"'");
+      b.classList.toggle('act',isMatch);
+    });
+    render();
+  }
+}
+function jc(i){bIdx=i;bSec=SW;bigRender();}
+function toggleBigPause(){
+  bPaused=!bPaused;
+  const btn=document.getElementById('bigPauseBtn');
+  if(btn)btn.textContent=bPaused?'▶ 繼續切換':'⏸ 暫停切換';
+}
+function sf(f,btn){filt=f;document.querySelectorAll('.fb').forEach(b=>b.classList.remove('act'));btn.classList.add('act');render();}
+function applyRanks(){
+  const ra=tasks.filter(t=>t.rank!==''&&!isNaN(parseInt(t.rank)));
+  const un=tasks.filter(t=>t.rank===''||isNaN(parseInt(t.rank)));
+  ra.sort((a,b)=>parseInt(a.rank)-parseInt(b.rank));
+  tasks=[...ra,...un];save();render();ss('排名已套用。');
+}
+function sRank(u,v){const t=tasks.find(x=>x.uid===u);if(t)t.rank=v.trim();}
+function setNote(u,v){const t=tasks.find(x=>x.uid===u);if(t){t.note=v;if(noteTimer)clearTimeout(noteTimer);noteTimer=setTimeout(()=>save(),1000);}}
+function togElim(u){
+  const t=tasks.find(x=>x.uid===u);if(!t)return;
+  if(!t.eliminated){if(timers[u]){clearInterval(timers[u]);delete timers[u];}t.state='idle';}
+  t.eliminated=!t.eliminated;save();render();
+}
+function render(){
+  // Don't re-render if a note input is focused (would disrupt typing)
+  const focused=document.activeElement;
+  if(focused&&focused.classList.contains('note-input'))return;
+  const list=document.getElementById('list');list.innerHTML='';
+  const vis=tasks.filter(t=>{
+    if(filt==='eliminated')return t.eliminated;
+    if(filt==='all')return !t.eliminated;
+    return !t.eliminated&&t.grp===filt;
+  });
+  vis.forEach(t=>{
+    const u=t.uid,card=document.createElement('div');
+    let cls='tc';
+    if(t.priority&&!t.eliminated)cls+=' pri';
+    if(t.state==='running')cls+=' run';
+    if(t.left===0&&!t.eliminated)cls+=' dn';
+    if(t.eliminated)cls+=' eli';
+    card.className=cls;card.id='cu'+u;card.draggable=true;
+    card.addEventListener('dragstart',e=>{dsUid=u;card.classList.add('drg');e.dataTransfer.effectAllowed='move';});
+    card.addEventListener('dragend',()=>{card.classList.remove('drg');document.querySelectorAll('.tc').forEach(c=>c.classList.remove('dov'));});
+    card.addEventListener('dragover',e=>{e.preventDefault();document.querySelectorAll('.tc').forEach(c=>c.classList.remove('dov'));card.classList.add('dov');});
+    card.addEventListener('dragleave',()=>card.classList.remove('dov'));
+    card.addEventListener('drop',e=>{
+      e.preventDefault();document.querySelectorAll('.tc').forEach(c=>c.classList.remove('dov'));
+      if(!dsUid||dsUid===u){dsUid=null;return;}
+      const si=tasks.findIndex(x=>x.uid===dsUid),di=tasks.findIndex(x=>x.uid===u);
+      if(si<0||di<0){dsUid=null;return;}
+      const mv=tasks.splice(si,1)[0];tasks.splice(si<di?di-1:di,0,mv);
+      dsUid=null;save();render();
+    });
+    const urg=t.left<60&&t.left>0&&t.state==='running';
+    const sl=t.left<t.mins*60&&t.left>0?'繼續':'開始';
+    const gl=CM[t.grp]?CM[t.grp].label:'',gc=CM[t.grp]?CM[t.grp].cls:'';
+    card.innerHTML=`
+      <div class="mr">
+        <span class="dh">⠿</span>
+        <input class="ri" type="text" value="${t.rank||''}" placeholder="#" oninput="sRank(${u},this.value)" onclick="event.stopPropagation()" ondragstart="event.stopPropagation()">
+        <div class="cb" style="background:${t.eliminated?'#ccc':CC[t.cat]};"></div>
+        <div class="ti">
+          <div class="tn${t.eliminated?' eli':''}">${t.name}</div>
+          <div class="tm"><span>預估 ${t.mins} 分鐘</span>${gl?`<span class="tg ${gc}">${gl}</span>`:''}</div>
+          <input class="note-input" type="text" maxlength="20" placeholder="備註…" value="${t.note||''}"
+            oninput="setNote(${u},this.value)" onclick="event.stopPropagation()" ondragstart="event.stopPropagation()">
+        </div>
+        <div class="bg">
+          ${t.eliminated?'<span class="tg-eli">剔除</span>':t.priority?'<span class="tg-pri">優先</span>':''}
+          ${!t.eliminated?`<span class="tg tg-${t.cat}">${CL[t.cat]}</span>`:''}
+        </div>
+        <div class="td${urg?' urg':''}${t.eliminated?' eli':''}" id="dd${u}">${fmt(t.left)}</div>
+        <div class="br" id="bb${u}">
+          ${!t.eliminated?(t.state!=='running'?`<button class="bs" onclick="so(${u})">${sl}</button>`:`<button class="bp" onclick="po(${u})">暫停</button>`):''}
+          ${!t.eliminated?`<button onclick="ro(${u})">重置</button>`:''}
+          ${!t.eliminated?`<button onclick="te2(${u})">⏱ 調時</button>`:''}
+          ${t.eliminated?`<button class="bu" onclick="togElim(${u})">取消剔除</button>`:`<button class="be" onclick="togElim(${u})">剔除</button>`}
+          <button class="bd" onclick="dt(${u})">刪除</button>
+        </div>
+      </div>
+      ${t.editOpen&&!t.eliminated?`<div class="er">
+        <label>分鐘：</label>
+        <input type="number" id="nn${u}" value="${t.mins}" min="1" max="480" step="1" oninput="sr2(${u})">
+        <input type="range" id="rr${u}" min="1" max="240" step="1" value="${Math.min(t.mins,240)}" oninput="sn2(${u})">
+        <button onclick="at(${u})">套用</button>
+      </div>`:''}`;
+    list.appendChild(card);
+  });
+  const eli=tasks.filter(t=>t.eliminated).length;
+  const pri=tasks.filter(t=>t.priority&&!t.eliminated).length;
+  document.getElementById('summary').textContent=`顯示 ${vis.length} / 共 ${tasks.filter(t=>!t.eliminated).length} 項，優先 ${pri}，剔除 ${eli}`;
+}
+function askRestore(){document.getElementById('cfmArea').innerHTML=`<div class="cfm"><span>確定還原全部預設清單？你刪除的項目會全部回來。</span><button class="bu" onclick="doRes()">確定還原</button><button onclick="document.getElementById('cfmArea').innerHTML=''">取消</button></div>`;}
+function doRes(){Object.values(timers).forEach(clearInterval);timers={};tasks=DF.map((t,i)=>({...t,uid:uid(),left:t.mins*60,state:'idle',editOpen:false,rank:String(i+1),eliminated:false,note:''}));save();document.getElementById('cfmArea').innerHTML='';ss('已還原。');render();}
+function sr2(u){const n=document.getElementById('nn'+u),r=document.getElementById('rr'+u);if(n&&r)r.value=n.value;}
+function sn2(u){const n=document.getElementById('nn'+u),r=document.getElementById('rr'+u);if(n&&r)n.value=r.value;}
+function te2(u){const t=tasks.find(x=>x.uid===u);if(t){t.editOpen=!t.editOpen;render();}}
+function at(u){
+  const t=tasks.find(x=>x.uid===u);if(!t)return;
+  const v=parseInt(document.getElementById('nn'+u).value)||t.mins;
+  if(timers[u]){clearInterval(timers[u]);delete timers[u];}
+  t.mins=v;t.left=v*60;t.state='idle';t.editOpen=false;save();render();
+}
+function tick(u){
+  const t=tasks.find(x=>x.uid===u);
+  if(!t){clearInterval(timers[u]);delete timers[u];return;}
+  if(t.left<=0){clearInterval(timers[u]);delete timers[u];t.state='done';save();ud(u);return;}
+  t.left--;ud(u);if(t.left%15===0)save();
+}
+function ud(u){
+  const d=document.getElementById('dd'+u);if(!d)return;
+  const t=tasks.find(x=>x.uid===u);if(!t)return;
+  d.textContent=fmt(t.left);
+  d.className='td'+(t.left<60&&t.left>0&&t.state==='running'?' urg':'')+(t.eliminated?' eli':'');
+  const c=document.getElementById('cu'+u);
+  if(c){let cl='tc';if(t.priority&&!t.eliminated)cl+=' pri';if(t.state==='running')cl+=' run';if(t.left===0&&!t.eliminated)cl+=' dn';if(t.eliminated)cl+=' eli';c.className=cl;}
+}
+function mkB(u,run){
+  const t=tasks.find(x=>x.uid===u);
+  const sl=t&&t.left<t.mins*60&&t.left>0?'繼續':'開始';
+  return(run?`<button class="bp" onclick="po(${u})">暫停</button>`:`<button class="bs" onclick="so(${u})">${sl}</button>`)
+    +`<button onclick="ro(${u})">重置</button><button onclick="te2(${u})">⏱ 調時</button><button class="be" onclick="togElim(${u})">剔除</button><button class="bd" onclick="dt(${u})">刪除</button>`;
+}
+function so(u){
+  const t=tasks.find(x=>x.uid===u);if(!t||t.state==='running'||t.eliminated)return;
+  if(t.left<=0)t.left=t.mins*60;t.state='running';
+  if(timers[u])clearInterval(timers[u]);
+  timers[u]=setInterval(()=>tick(u),1000);
+  const b=document.getElementById('bb'+u);if(b)b.innerHTML=mkB(u,true);
+  const c=document.getElementById('cu'+u);if(c)c.classList.add('run');
+}
+function po(u){
+  const t=tasks.find(x=>x.uid===u);if(!t)return;
+  if(timers[u]){clearInterval(timers[u]);delete timers[u];}
+  t.state='paused';save();
+  const b=document.getElementById('bb'+u);if(b)b.innerHTML=mkB(u,false);
+  const c=document.getElementById('cu'+u);if(c)c.classList.remove('run');
+}
+function ro(u){
+  const t=tasks.find(x=>x.uid===u);if(!t)return;
+  if(timers[u]){clearInterval(timers[u]);delete timers[u];}
+  t.left=t.mins*60;t.state='idle';t.editOpen=false;save();render();
+}
+function dt(u){
+  const t=tasks.find(x=>x.uid===u);if(!t)return;
+  if(timers[u]){clearInterval(timers[u]);delete timers[u];}
+  tasks=tasks.filter(x=>x.uid!==u);save();ss('已刪除，重新整理不會復原。');render();
+}
+function startAll(){tasks.filter(t=>!t.eliminated).forEach(t=>so(t.uid));}
+function pauseAll(){tasks.filter(t=>t.state==='running').forEach(t=>po(t.uid));}
+function resetAll(){tasks.filter(t=>!t.eliminated).forEach(t=>ro(t.uid));}
+init();
+</script>
+</body>
+</html>
