@@ -2,6 +2,7 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
+<meta name="description" content="任務倒數計時器 - 個人任務管理清單">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>任務倒數計時器</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏱️</text></svg>">
@@ -123,12 +124,13 @@ button:hover{background:#f0eeea;}
   <button onclick="pauseAll()">全部暫停</button>
   <button onclick="resetAll()">全部重置</button>
   <button onclick="applyRanks()">套用排名</button>
+  <button onclick="copyCategory()" id="copyBtn">📋 複製清單</button>
   <button class="bd" onclick="askRestore()">還原預設清單</button>
   <span class="summary" id="summary"></span>
 </div>
 <div id="cfmArea"></div>
 <div class="sbar" id="status"></div>
-<div id="list"></div>
+<article id="list" aria-label="任務清單"></article>
 
 <script>
 const SK='david-tasks-stable';
@@ -143,79 +145,54 @@ const CL={red:'重點',amber:'重要',blue:'一般',green:'備忘'};
 const SW=300;
 
 const DF=[
-  {name:"好習慣：按照最後往來的年份來整理 Line 好友，可以看到最新新增",mins:5,cat:"green",priority:false,grp:"family",origNum:1},
-  {name:"家裡：冷氣濾網 3/28 看還 ok 主臥室",mins:5,cat:"green",priority:false,grp:"family",origNum:2},
+  {name:"家裡：冷氣濾網 3/28 看還 ok 主臥室",mins:5,cat:"green",priority:false,grp:"family",origNum:1},
+  {name:"好習慣：按照最後往來的年份來整理 Line 好友，可以看到最新新增",mins:5,cat:"green",priority:false,grp:"family",origNum:2},
   {name:"家庭時間＋安息日蠟燭、領聖餐，敬拜先用 YT，避免小孩吵架分心，時間好像要檢討何時點蠟燭",mins:20,cat:"amber",priority:false,grp:"family",origNum:3},
-  {name:"放假：記得去看阿嬤",mins:5,cat:"green",priority:false,grp:"family",origNum:4},
-  {name:"娃娃跟小朋友溝通全部改到阿嬤家，5/31 清洗娃娃",mins:10,cat:"green",priority:false,grp:"family",origNum:5},
-  {name:"剪頭髮 3/23 換線",mins:5,cat:"green",priority:false,grp:"family",origNum:6},
-  {name:"我們家的小孩會背誦 Shema，把聖經寫成歌曲",mins:15,cat:"amber",priority:false,grp:"pray",origNum:7},
-  {name:"電影之夜：心裡的聲音、狸想世界、動物方城市 2",mins:10,cat:"green",priority:false,grp:"family",origNum:8},
-  {name:"週末跟安祺的 RPG 要安排",mins:10,cat:"blue",priority:false,grp:"pray",origNum:9},
-  {name:"房間收納櫃兩 Salma 整理然後歸到倉庫",mins:20,cat:"green",priority:false,grp:"family",origNum:10},
-  {name:"整理音響兩旁的雜誌架",mins:15,cat:"green",priority:false,grp:"family",origNum:11},
-  {name:"用十誡和七釋放禱告每週，納入家庭時光：神真舒服，背負自",mins:15,cat:"amber",priority:false,grp:"pray",origNum:12},
-  {name:"聖經考試要預備，要知道要考啥",mins:15,cat:"amber",priority:false,grp:"pray",origNum:13},
-  {name:"安裝女兒房間櫃子的支撐架，要買鐵片，小北",mins:15,cat:"green",priority:false,grp:"family",origNum:14},
-  {name:"帶孩子去騎腳踏車，要帶水",mins:10,cat:"green",priority:false,grp:"family",origNum:15},
-  {name:"不要再為了小朋友的考試破壞週末的步調安息日等等，是 4/17，問小孩如何幫助",mins:10,cat:"amber",priority:false,grp:"family",origNum:16},
-  {name:"家庭會議：安排小朋友睡午覺的時間",mins:15,cat:"amber",priority:false,grp:"family",origNum:17},
-  {name:"大衛包森加上聖經馬拉松",mins:20,cat:"amber",priority:false,grp:"pray",origNum:18},
-  {name:"枕頭套要每一個禮拜清洗：0503 全套清洗",mins:5,cat:"green",priority:false,grp:"family",origNum:19},
-  {name:"為年度命名禱告，全家一起",mins:10,cat:"green",priority:false,grp:"pray",origNum:20},
-  {name:"要帶水，跟哥哥一起打樂樂棒球，主日傍晚，我先陪嘟嘟玩滑板車，哥哥再打球",mins:15,cat:"green",priority:false,grp:"family",origNum:21},
-  {name:"駿宏帶著穆勒聖經綜覽班，大衛可以帶著嘟嘟",mins:20,cat:"blue",priority:false,grp:"church",origNum:22},
-  {name:"帶孩子一起來聽五五重職分，CD 要先預備好，把 mp3 輸出，放佈道家 CD 進去包包",mins:20,cat:"amber",priority:false,grp:"church",origNum:23},
-  {name:"尋求上帝怎麼樣幫助孩子在家庭時光敞開分享，多找幾個破冰談話遊戲",mins:15,cat:"amber",priority:false,grp:"family",origNum:24},
-  {name:"小朋友晨禱聽聖經要戴耳機：設定行程",mins:10,cat:"green",priority:false,grp:"family",origNum:25},
-  {name:"全家一起看 CBN NEWS",mins:15,cat:"green",priority:false,grp:"family",origNum:26},
-  {name:"看大鮑和布永康烈火特會",mins:20,cat:"green",priority:false,grp:"pray",origNum:27},
-  {name:"在家裡行走禱告",mins:10,cat:"green",priority:false,grp:"pray",origNum:28},
-  {name:"哥哥還有弟弟可以去公園玩遙控汽車",mins:10,cat:"green",priority:false,grp:"family",origNum:29},
-  {name:"哥哥錯別字，要往前翻",mins:10,cat:"green",priority:false,grp:"family",origNum:30},
-  {name:"帶慕潔的徐同學來三蘆家庭關懷中心，我當主禮會有困難",mins:20,cat:"amber",priority:false,grp:"church",origNum:31},
-  {name:"程式碼跟哥哥和妹妹交通",mins:15,cat:"amber",priority:false,grp:"church",origNum:32},
-  {name:"整理家中的紙類",mins:15,cat:"green",priority:false,grp:"family",origNum:33},
-  {name:"週六晨禱記得帶樂樂棒球",mins:5,cat:"green",priority:false,grp:"pray",origNum:34},
-  {name:"去參加早晨禱告要記得帶腳踏車架，前一天要準備好",mins:10,cat:"green",priority:false,grp:"pray",origNum:35},
-  {name:"去公園要帶防蚊液，帶著小太陽在土公園玩滑板車是去大都會的替代方案，我在後面騎腳踏車追她",mins:10,cat:"green",priority:false,grp:"family",origNum:36},
-  {name:"要來預備母親節感念文，哥哥生日",mins:20,cat:"amber",priority:false,grp:"family",origNum:37},
-  {name:"幫小孩印數學考卷",mins:5,cat:"green",priority:false,grp:"family",origNum:38},
-  {name:"要帶女兒去吃飯",mins:30,cat:"green",priority:false,grp:"family",origNum:39},
-  {name:"家庭時間要考慮孩子的體力，下午消耗太多會很累",mins:10,cat:"amber",priority:false,grp:"family",origNum:40},
-  {name:"線上桌遊",mins:15,cat:"green",priority:false,grp:"family",origNum:41},
-  {name:"週末要設定睡覺時間",mins:5,cat:"green",priority:false,grp:"family",origNum:42},
-  {name:"整理安祺任務",mins:15,cat:"amber",priority:false,grp:"church",origNum:43},
-  {name:"帶嘟嘟去跑操場，要帶水",mins:10,cat:"green",priority:false,grp:"family",origNum:44},
-  {name:"問守愚：啟發的討論時間也分組？為 RPG 預備，Albert 他們華碩，有一個 Excel",mins:20,cat:"blue",priority:false,grp:"church",origNum:45},
-  {name:"王大哥教會可以邀請守愚來培訓",mins:15,cat:"blue",priority:false,grp:"church",origNum:46},
-  {name:"家裡所有東西都貼姓名貼",mins:20,cat:"green",priority:false,grp:"family",origNum:47},
-  {name:"買音樂軟體給慕潔",mins:10,cat:"green",priority:false,grp:"church",origNum:48},
-  {name:"要找說明主日重要性的影片",mins:10,cat:"green",priority:false,grp:"church",origNum:49},
-  {name:"NotebookLM 2026 大更新｜新的內容應用有空補課一下",mins:30,cat:"blue",priority:false,grp:"church",origNum:50},
-  {name:"https://www.goodtv.tv/watch?episode=115809",mins:20,cat:"green",priority:false,grp:"pray",origNum:51},
-  {name:"衣服要換季",mins:20,cat:"green",priority:false,grp:"family",origNum:52},
-  {name:"哥哥和嘟嘟可以去學校操場玩綠色西瓜氣球",mins:5,cat:"green",priority:false,grp:"family",origNum:53},
-  {name:"看蜜蜂之謎",mins:20,cat:"green",priority:false,grp:"family",origNum:54},
-  {name:"星期天下午或早上，三蘆有電鋼琴可以敬拜",mins:15,cat:"green",priority:false,grp:"church",origNum:55},
-  {name:"3白1黑 Kallax 檯面整理",mins:20,cat:"green",priority:false,grp:"family",origNum:56},
-  {name:"孩子的物品都貼上姓名貼",mins:10,cat:"green",priority:false,grp:"family",origNum:57},
-  {name:"幫哥哥姐姐買英文單字卡",mins:10,cat:"green",priority:false,grp:"family",origNum:58},
-  {name:"黃昱愷 曹芷瑄 郭芯羽排擠女 陳思儒 吳芯語",mins:20,cat:"amber",priority:false,grp:"family",origNum:59},
-  {name:"可以多一點去爸爸家，媽媽可以去 17 樓",mins:10,cat:"green",priority:false,grp:"family",origNum:60},
-  {name:"可以跟孩子玩戰鬥陀螺",mins:10,cat:"green",priority:false,grp:"family",origNum:61},
-  {name:"爸爸家需要 Chrome Cast",mins:10,cat:"green",priority:false,grp:"family",origNum:62},
-  {name:"禱告，獨立帶啟發的同工興起，銓興",mins:10,cat:"green",priority:false,grp:"pray",origNum:63},
-  {name:"跨組要協調的東西，答案要出來",mins:15,cat:"amber",priority:false,grp:"church",origNum:64},
-  {name:"晨禱和主日小朋友的番茄鐘要更新",mins:15,cat:"amber",priority:false,grp:"church",origNum:65},
-  {name:"彩虹愛家課程時間",mins:10,cat:"amber",priority:false,grp:"church",origNum:66},
-  {name:"週末晚上的時間全家討論",mins:10,cat:"green",priority:false,grp:"family",origNum:67},
-  {name:"帶著小朋友來幫風扇潤滑",mins:10,cat:"green",priority:false,grp:"family",origNum:68},
-  {name:"我會帶著孩子做菜，蒸蛋等等",mins:15,cat:"green",priority:false,grp:"family",origNum:69},
-  {name:"可以的呼召：晨禱",mins:10,cat:"green",priority:false,grp:"pray",origNum:70},
-  {name:"每天用 5S 來檢核",mins:5,cat:"green",priority:false,grp:"family",origNum:71},
-  {name:"劉先生明天會告知估價結果，並提及鼠患已使多戶電線破皮，有安全疑慮",mins:15,cat:"amber",priority:false,grp:"family",origNum:72},
-  {name:"電影：Social Dilemma",mins:20,cat:"green",priority:false,grp:"family",origNum:73},
+  {name:"剪頭髮 3/23 換線",mins:5,cat:"green",priority:false,grp:"family",origNum:4},
+  {name:"週末跟安祺的 RPG 要安排",mins:10,cat:"blue",priority:false,grp:"pray",origNum:5},
+  {name:"房間收納櫃兩 Salma 整理然後歸到倉庫",mins:20,cat:"green",priority:false,grp:"family",origNum:6},
+  {name:"整理音響兩旁的雜誌架",mins:15,cat:"green",priority:false,grp:"family",origNum:7},
+  {name:"安裝女兒房間櫃子的支撐架，要買鐵片，小北",mins:15,cat:"green",priority:false,grp:"family",origNum:8},
+  {name:"帶孩子去騎腳踏車，要帶水",mins:10,cat:"green",priority:false,grp:"family",origNum:9},
+  {name:"家庭會議：安排小朋友睡午覺的時間",mins:15,cat:"amber",priority:false,grp:"family",origNum:10},
+  {name:"枕頭套要每一個禮拜清洗：0503 全套清洗",mins:5,cat:"green",priority:false,grp:"family",origNum:11},
+  {name:"要帶水，跟哥哥一起打樂樂棒球，主日傍晚，我先陪嘟嘟玩滑板車，哥哥再打球",mins:15,cat:"green",priority:false,grp:"family",origNum:12},
+  {name:"駿宏帶著穆勒聖經綜覽班，大衛可以帶著嘟嘟",mins:20,cat:"blue",priority:false,grp:"church",origNum:13},
+  {name:"帶孩子一起來聽五五重職分，CD 要先預備好，把 mp3 輸出，放佈道家 CD 進去包包",mins:20,cat:"amber",priority:false,grp:"church",origNum:14},
+  {name:"尋求上帝怎麼樣幫助孩子在家庭時光敞開分享，多找幾個破冰談話遊戲",mins:15,cat:"amber",priority:false,grp:"family",origNum:15},
+  {name:"小朋友晨禱聽聖經要戴耳機：設定行程",mins:10,cat:"green",priority:false,grp:"family",origNum:16},
+  {name:"在家裡行走禱告",mins:10,cat:"green",priority:false,grp:"pray",origNum:17},
+  {name:"哥哥還有弟弟可以去公園玩遙控汽車",mins:10,cat:"green",priority:false,grp:"family",origNum:18},
+  {name:"哥哥錯別字，要往前翻",mins:10,cat:"green",priority:false,grp:"family",origNum:19},
+  {name:"整理家中的紙類",mins:15,cat:"green",priority:false,grp:"family",origNum:20},
+  {name:"去參加早晨禱告要記得帶腳踏車架，前一天要準備好",mins:10,cat:"green",priority:false,grp:"pray",origNum:21},
+  {name:"去公園要帶防蚊液，帶著小太陽在土公園玩滑板車是去大都會的替代方案，我在後面騎腳踏車追她",mins:10,cat:"green",priority:false,grp:"family",origNum:22},
+  {name:"要來預備母親節感念文，哥哥生日",mins:20,cat:"amber",priority:false,grp:"family",origNum:23},
+  {name:"幫小孩印數學考卷",mins:5,cat:"green",priority:false,grp:"family",origNum:24},
+  {name:"要帶女兒去吃飯",mins:30,cat:"green",priority:false,grp:"family",origNum:25},
+  {name:"家庭時間要考慮孩子的體力，下午消耗太多會很累",mins:10,cat:"amber",priority:false,grp:"family",origNum:26},
+  {name:"線上桌遊",mins:15,cat:"green",priority:false,grp:"family",origNum:27},
+  {name:"週末要設定睡覺時間",mins:5,cat:"green",priority:false,grp:"family",origNum:28},
+  {name:"整理安祺任務",mins:15,cat:"amber",priority:false,grp:"church",origNum:29},
+  {name:"帶嘟嘟去跑操場，要帶水",mins:10,cat:"green",priority:false,grp:"family",origNum:30},
+  {name:"家裡所有東西都貼姓名貼",mins:20,cat:"green",priority:false,grp:"family",origNum:31},
+  {name:"買音樂軟體給慕潔",mins:10,cat:"green",priority:false,grp:"church",origNum:32},
+  {name:"衣服要換季",mins:20,cat:"green",priority:false,grp:"family",origNum:33},
+  {name:"哥哥和嘟嘟可以去學校操場玩綠色西瓜氣球",mins:5,cat:"green",priority:false,grp:"family",origNum:34},
+  {name:"星期天下午或早上，三蘆有電鋼琴可以敬拜",mins:15,cat:"green",priority:false,grp:"church",origNum:35},
+  {name:"3白1黑 Kallax 檯面整理",mins:20,cat:"green",priority:false,grp:"family",origNum:36},
+  {name:"孩子的物品都貼上姓名貼",mins:10,cat:"green",priority:false,grp:"family",origNum:37},
+  {name:"幫哥哥姐姐買英文單字卡",mins:10,cat:"green",priority:false,grp:"family",origNum:38},
+  {name:"黃昱愷 曹芷瑄 郭芯羽排擠女 陳思儒 吳芯語",mins:20,cat:"amber",priority:false,grp:"family",origNum:39},
+  {name:"可以多一點去爸爸家，媽媽可以去 17 樓",mins:10,cat:"green",priority:false,grp:"family",origNum:40},
+  {name:"可以跟孩子玩戰鬥陀螺",mins:10,cat:"green",priority:false,grp:"family",origNum:41},
+  {name:"晨禱和主日小朋友的番茄鐘要更新",mins:15,cat:"amber",priority:false,grp:"pray",origNum:42},
+  {name:"週末晚上的時間全家討論",mins:10,cat:"green",priority:false,grp:"family",origNum:43},
+  {name:"帶著小朋友來幫風扇潤滑",mins:10,cat:"green",priority:false,grp:"family",origNum:44},
+  {name:"我會帶著孩子做菜，蒸蛋等等",mins:15,cat:"green",priority:false,grp:"family",origNum:45},
+  {name:"每天用 5S 來檢核",mins:5,cat:"green",priority:false,grp:"family",origNum:46},
+  {name:"劉先生明天會告知估價結果，並提及鼠患已使多戶電線破皮，有安全疑慮",mins:15,cat:"amber",priority:false,grp:"family",origNum:47},
+  {name:"聖誕慶典可以分兩批，哥哥、姊姊和朋友分兩批",mins:15,cat:"amber",priority:false,grp:"church",origNum:48},
 ];
 
 const API='https://script.google.com/macros/s/AKfycby76QenFGRUIJeA7wj-rX2MkmVLYRmEG7euRsIeCgDlHuFgnfkbadvAanJFSFwX2Z0T0Q/exec';
@@ -461,6 +438,18 @@ function dt(u){
   const t=tasks.find(x=>x.uid===u);if(!t)return;
   if(timers[u]){clearInterval(timers[u]);delete timers[u];}
   tasks=tasks.filter(x=>x.uid!==u);save();ss('已刪除，重新整理不會復原。');render();
+}
+
+function copyCategory(){
+  const grp = filt==='all'||filt==='eliminated' ? null : filt;
+  const label = grp ? (CM[grp]?CM[grp].label:grp) : '全部';
+  const list = tasks.filter(t=>!t.eliminated && (grp?t.grp===grp:true));
+  const text = list.map((t,i)=>`${t.origNum||i+1}. ${t.name}`).join('\n');
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.getElementById('copyBtn');
+    btn.textContent='✓ 已複製';
+    setTimeout(()=>btn.textContent='📋 複製清單',2000);
+  }).catch(()=>ss('複製失敗，請手動選取'));
 }
 function startAll(){tasks.filter(t=>!t.eliminated).forEach(t=>so(t.uid));}
 function pauseAll(){tasks.filter(t=>t.state==='running').forEach(t=>po(t.uid));}
