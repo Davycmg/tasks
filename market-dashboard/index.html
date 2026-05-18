@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>市場評分儀表板</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -323,16 +324,16 @@ tr.detail-row td {
           <th colspan="12" class="br" style="color:var(--text2)">夜盤 NIGHT SESSION</th>
         </tr>
         <tr class="sh">
-          <th class="bl" style="width:38px">r1</th><th style="width:38px">r5</th><th class="br" style="width:38px">r20</th>
-          <th style="width:38px">r1</th><th style="width:38px">r5</th><th class="br" style="width:38px">r20</th>
-          <th style="width:38px">r1</th><th style="width:38px">r5</th><th class="br" style="width:38px">r20</th>
+          <th class="bl" style="width:28px">r1</th><th style="width:28px">r5</th><th class="br" style="width:28px">r20</th>
+          <th style="width:28px">r1</th><th style="width:28px">r5</th><th class="br" style="width:28px">r20</th>
+          <th style="width:28px">r1</th><th style="width:28px">r5</th><th class="br" style="width:28px">r20</th>
           <th class="br" style="width:58px;color:var(--purple)">收盤</th>
           <th class="br" style="width:46px;color:var(--purple)">漲跌</th>
           <th class="br" style="width:72px"></th>
-          <th style="width:38px">r1</th><th style="width:38px">r5</th><th class="br" style="width:38px">r20</th>
-          <th style="width:38px">r1</th><th style="width:38px">r5</th><th class="br" style="width:38px">r20</th>
-          <th style="width:38px">r1</th><th style="width:38px">r5</th><th class="br" style="width:38px">r20</th>
-          <th style="width:38px">r1</th><th style="width:38px">r5</th><th class="br" style="width:38px">r20</th>
+          <th style="width:28px">r1</th><th style="width:28px">r5</th><th class="br" style="width:28px">r20</th>
+          <th style="width:28px">r1</th><th style="width:28px">r5</th><th class="br" style="width:28px">r20</th>
+          <th style="width:28px">r1</th><th style="width:28px">r5</th><th class="br" style="width:28px">r20</th>
+          <th style="width:28px">r1</th><th style="width:28px">r5</th><th class="br" style="width:28px">r20</th>
         </tr>
         <tr class="sh" style="border-bottom:1px solid var(--border2)">
           <th style="text-align:left;padding-left:14px"></th>
@@ -354,7 +355,7 @@ tr.detail-row td {
     <span><span style="color:var(--bear)">●</span> r值 ≥ 1 空方優勢</span>
     <span><span style="color:var(--bull)">●</span> r值 &lt; 1 多方優勢</span>
     <span><span style="color:var(--text3)">●</span> 中間地帶</span>
-    <span>// 灰色r值 = 預測方向不相關</span>
+    <span>// r值：深色=強相關 淺色=弱相關 最淺=不相關 無色=未驗證</span>
     <span>// 點擊列展開細節</span>
   </div>
 </div>
@@ -376,9 +377,27 @@ function vClass(v) {
 
 function vHtml(v, corr) {
   if (v === null || v === undefined) return '<span class="v-null">—</span>';
-  // corr=false(不相關) → 灰色；corr=true(相關) 或 null(未知) → 正常顏色
-  var cls = (corr === false) ? 'v-null' : vClass(v);
-  return '<span class="' + cls + '">' + v + '</span>';
+  // corr = null → 正常顏色（未驗證）
+  // corr = { match, strength }
+  //   相關(match=true)：strength 0~1 對應 alpha 0.3~1.0（淺→深）
+  //   不相關(match=false)：固定最淺色 alpha 0.25
+  if (corr === null || corr === undefined) {
+    return '<span class="' + vClass(v) + '">' + v + '</span>';
+  }
+  var isBull = (v >= 1); // r>=1 紅系，r<1 綠系
+  var color;
+  if (corr.match) {
+    var alpha = 0.3 + (corr.strength || 0) * 0.7;
+    color = isBull
+      ? 'rgba(248,113,113,' + alpha.toFixed(2) + ')'
+      : 'rgba(52,211,153,'  + alpha.toFixed(2) + ')';
+  } else {
+    // 不相關：固定最淺
+    color = isBull
+      ? 'rgba(248,113,113,0.25)'
+      : 'rgba(52,211,153,0.25)';
+  }
+  return '<span style="color:' + color + ';font-weight:500">' + v + '</span>';
 }
 
 // ── 新聞標籤 ──
