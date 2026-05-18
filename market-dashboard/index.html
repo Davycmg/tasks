@@ -165,11 +165,15 @@ td.date-cell {
 td.score-cell { font-size: 11px; font-weight: 500; }
 td.price-cell { font-size: 11px; }
 
-/* ── Score colors ── */
-.v-bull { color: var(--bull); }
-.v-bear { color: var(--bear); }
+/* ── Score colors: r>=1 紅(空方), r<1 綠(多方) ── */
+.v-bull { color: var(--bear); }
+.v-bear { color: var(--bull); }
 .v-neut { color: var(--text3); }
 .v-null { color: var(--text3); opacity: 0.4; }
+.chg-up   { color: var(--bear); }
+.chg-down { color: var(--bull); }
+.chg-zero { color: var(--text3); }
+.corr-dot { font-size: 8px; vertical-align: super; margin-left: 1px; }
 
 /* ── Borders ── */
 .bl { border-left: 1px solid var(--border2) !important; }
@@ -347,10 +351,11 @@ tr.detail-row td {
   </div>
 
   <div class="legend">
-    <span><span style="color:var(--bull)">●</span> r值 ≥ 1.5 多方優勢</span>
-    <span><span style="color:var(--bear)">●</span> r值 ≤ 0.5 空方優勢</span>
+    <span><span style="color:var(--bear)">●</span> r值 ≥ 1 空方優勢</span>
+    <span><span style="color:var(--bull)">●</span> r值 &lt; 1 多方優勢</span>
     <span><span style="color:var(--text3)">●</span> 中間地帶</span>
-    <span>// 點擊任一列展開細節</span>
+    <span>● 相關 ○ 不相關（r值右上角）</span>
+    <span>// 點擊列展開細節</span>
   </div>
 </div>
 
@@ -364,13 +369,24 @@ const LABELS = {"2330日分析":"2330","TPE日分析":"TPE","KOSPI日分析":"KO
 // ── 評分顏色 ──
 function vClass(v) {
   if (v === null || v === undefined) return 'v-null';
-  if (v >= 1.5) return 'v-bull';
-  if (v <= 0.5) return 'v-bear';
+  if (v >= 1) return 'v-bull';   // 紅
+  if (v < 1)  return 'v-bear';  // 綠
   return 'v-neut';
 }
-function vHtml(v) {
+
+// 相關性圓點 HTML
+function corrDot(rVal, corrResult, cls) {
+  if (rVal === null || rVal === undefined) return '';
+  if (corrResult === null || corrResult === undefined) return '';
+  var dot = corrResult ? '●' : '○';
+  return '<span class="corr-dot ' + cls + '">' + dot + '</span>';
+}
+
+function vHtml(v, corr) {
   if (v === null || v === undefined) return '<span class="v-null">—</span>';
-  return '<span class="' + vClass(v) + '">' + v + '</span>';
+  var cls = vClass(v);
+  var dot = (corr !== undefined) ? corrDot(v, corr, cls) : '';
+  return '<span class="' + cls + '">' + v + dot + '</span>';
 }
 
 // ── 新聞標籤 ──
@@ -387,12 +403,13 @@ function newsTag(n) {
   return '<span class="tag ' + cls + '">' + d + '</span>';
 }
 
-// ── TPE 漲跌 ──
+// ── TPE 漲跌：正漲紅，負跌綠 ──
 function chgHtml(chg) {
   if (chg === null || chg === undefined) return '<span class="v-null">—</span>';
-  var cls = chg > 0 ? 'v-bull' : chg < 0 ? 'v-bear' : 'v-neut';
+  var cls = chg > 0 ? 'chg-up' : chg < 0 ? 'chg-down' : 'chg-zero';
   var prefix = chg > 0 ? '+' : '';
-  return '<span class="' + cls + '">' + prefix + chg + '</span>';
+  var chgRounded = Math.round(chg);
+  return '<span class="' + cls + '">' + prefix + chgRounded + '</span>';
 }
 
 // ── 渲染 ──
@@ -411,13 +428,13 @@ function render(data) {
     DAY.forEach(function(t, ti) {
       var s = row[t] || {};
       var lBorder = ti === 0 ? ' bl' : '';
-      html += '<td class="score-cell' + lBorder + '">' + vHtml(s.r1) + '</td>';
-      html += '<td class="score-cell">'   + vHtml(s.r5)  + '</td>';
-      html += '<td class="score-cell br">'+ vHtml(s.r20) + '</td>';
+      html += '<td class="score-cell' + lBorder + '">' + vHtml(s.r1, s.corr_r1) + '</td>';
+      html += '<td class="score-cell">'   + vHtml(s.r5,  s.corr_r5)  + '</td>';
+      html += '<td class="score-cell br">'+ vHtml(s.r20, s.corr_r20) + '</td>';
     });
 
     // TPE 收盤 & 漲跌
-    var closeStr = (tp.close !== null && tp.close !== undefined) ? tp.close.toLocaleString() : '—';
+    var closeStr = (tp.close !== null && tp.close !== undefined) ? Math.round(tp.close).toLocaleString() : '—';
     html += '<td class="price-cell br" style="color:var(--purple)">' + closeStr + '</td>';
     html += '<td class="price-cell br">' + chgHtml(tp.change) + '</td>';
 
@@ -427,9 +444,9 @@ function render(data) {
     // 夜盤四檔 r1/r5/r20
     NIGHT.forEach(function(t) {
       var s = row[t] || {};
-      html += '<td class="score-cell bl-s">' + vHtml(s.r1)  + '</td>';
-      html += '<td class="score-cell">'      + vHtml(s.r5)  + '</td>';
-      html += '<td class="score-cell br">'   + vHtml(s.r20) + '</td>';
+      html += '<td class="score-cell bl-s">' + vHtml(s.r1,  s.corr_r1)  + '</td>';
+      html += '<td class="score-cell">'      + vHtml(s.r5,  s.corr_r5)  + '</td>';
+      html += '<td class="score-cell br">'   + vHtml(s.r20, s.corr_r20) + '</td>';
     });
 
     html += '</tr>';
