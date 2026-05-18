@@ -173,7 +173,7 @@ td.price-cell { font-size: 11px; }
 .chg-up   { color: var(--bear); }
 .chg-down { color: var(--bull); }
 .chg-zero { color: var(--text3); }
-.corr-dot { font-size: 8px; vertical-align: super; margin-left: 1px; }
+
 
 /* ── Borders ── */
 .bl { border-left: 1px solid var(--border2) !important; }
@@ -354,7 +354,7 @@ tr.detail-row td {
     <span><span style="color:var(--bear)">●</span> r值 ≥ 1 空方優勢</span>
     <span><span style="color:var(--bull)">●</span> r值 &lt; 1 多方優勢</span>
     <span><span style="color:var(--text3)">●</span> 中間地帶</span>
-    <span>● 相關 ○ 不相關（r值右上角）</span>
+    <span>// 灰色r值 = 預測方向不相關</span>
     <span>// 點擊列展開細節</span>
   </div>
 </div>
@@ -374,19 +374,11 @@ function vClass(v) {
   return 'v-neut';
 }
 
-// 相關性圓點 HTML
-function corrDot(rVal, corrResult, cls) {
-  if (rVal === null || rVal === undefined) return '';
-  if (corrResult === null || corrResult === undefined) return '';
-  var dot = corrResult ? '●' : '○';
-  return '<span class="corr-dot ' + cls + '">' + dot + '</span>';
-}
-
 function vHtml(v, corr) {
   if (v === null || v === undefined) return '<span class="v-null">—</span>';
-  var cls = vClass(v);
-  var dot = (corr !== undefined) ? corrDot(v, corr, cls) : '';
-  return '<span class="' + cls + '">' + v + dot + '</span>';
+  // corr=false(不相關) → 灰色；corr=true(相關) 或 null(未知) → 正常顏色
+  var cls = (corr === false) ? 'v-null' : vClass(v);
+  return '<span class="' + cls + '">' + v + '</span>';
 }
 
 // ── 新聞標籤 ──
