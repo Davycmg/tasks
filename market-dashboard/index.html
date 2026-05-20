@@ -415,10 +415,10 @@ function vHtml(v, corr) {
       + '</span>';
   }
 
-  // 相關不符：字色變淡，無 bar
+  // 相關不符：字色正常，無 bar
   if (!corr.match) {
     return '<span style="display:inline-flex;flex-direction:column;align-items:center;gap:1px;line-height:1">' 
-      + '<span style="color:' + numColorDim + ';font-weight:500">' + v + '</span>'
+      + '<span style="color:' + numColorFull + ';font-weight:500">' + v + '</span>'
       + '<span style="height:3px;width:100%"></span>'
       + '</span>';
   }
