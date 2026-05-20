@@ -2,8 +2,10 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
+<meta name="description" content="任務倒數計時器 - 個人任務管理清單">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>任務倒數計時器</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏱️</text></svg>">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f0;color:#1a1a1a;padding:1rem;}
@@ -84,6 +86,74 @@ button:hover{background:#f0eeea;}
 </style>
 </head>
 <body>
+<!-- 閱讀模式靜態內容 -->
+<main id="reading-content" style="font-size:13px;color:#666;padding:1rem 0;border-top:1px solid #eee;margin-top:2rem;">
+<h1>任務清單</h1>
+<section><h2>🌱 成長</h2><ol><li>11. 找仕明哥 RPG</li>
+<li>16. 週一召集 RPG 禱告會，週四找張主任和士斌哥 RPG，二四銓興哥、冠禎哥，為吉昇禱告</li>
+<li>17. 啟發代禱信</li>
+<li>18. 寫 RPG 筆記：為了祈禱午餐會和楷譯，孝宜牧師會特別安排見證，預備許多的滿福寶</li>
+<li>33. 可以找吉昇莊敬一起 RPG</li>
+<li>35. 禱告要不要進入信望愛</li>
+<li>36. 記得要約清明追思，要分享族譜、家族建造</li>
+<li>41. 更新抗癌禱告</li>
+<li>50. 為了靈命突破，我要求的恩典是：領袖興起 1+3 穩定</li>
+<li>51. 整理出禱告儀表板</li>
+<li>54. 可以的呼召：晨禱</li>
+<li>60. 豪雷：週六沒有咖就來晨禱</li>
+<li>61. 確認有多少人會為你禱告</li>
+<li>62. 2033年成為怎麼樣的人，你怕啥，瓶頸是啥</li>
+<li>66. 呼召詩舜哥：願不願意跟耶穌禱告</li>
+<li>68. https://www.youtube.com/watch?v=X4Ujyk2UcEg</li></ol></section><section><h2>🤝 社群</h2><ol><li>1. 要問同工覺得還可以邀請誰</li>
+<li>3. 啟發：呼召人來受洗，高雄市議會受洗的見證</li>
+<li>4. 會而不議，議而不決，決而不行</li>
+<li>6. 啟發邀請：士斌、資訊室人員、冠禎哥（重點中的重點）</li>
+<li>8. 啟發結帳，請款：啟發重點，誰是進入牧養平台者？啟發志工的邀請 麗文</li>
+<li>12. 主禮筆記</li>
+<li>19. 領袖班的作業：把握方向，清楚每一次聚會的中心思想與目標，避免天南地北地閒聊</li>
+<li>22. 找世德當同工：關心世德</li>
+<li>23. 呼召：職場主日 06/07，BSH、晨禱、啟發、RPG</li>
+<li>24. 下午有手機課的時候豪雷過來：豪雷政宏 RPG＋宗諺＋炳傑楷議 5/22，電話上跟宗諺 RPG＋問禱告事項，可以請他來我們研究室</li>
+<li>27. 建管處秀華要 RPG</li>
+<li>28. 約同工 12:15 週四</li>
+<li>30. 預備參加週四的弟兄小組 5/21：哥哥姊姊是第一個困難</li>
+<li>31. 啟發：聚會中感恩時間會偏長，好詩歌：更多認識你，RPG 影片聲音太小，拜託麗文姐擦桌子</li>
+<li>34. 聚會點心杯子要定，如果是喝茶的話，邀請秀華進來啟發 RPG</li>
+<li>42. 開發連結，稍遠的 BEST 模式：楷譯 翔逸</li>
+<li>43. 確認新希望 2025 年 3 月的奉獻</li>
+<li>45. 浩田：禱告、啟發、程式開發</li>
+<li>46. 跨組要協調的東西，答案要出來</li>
+<li>47. 下週每一組要報告進展，人力和進度要清楚</li>
+<li>52. 邀請啟發的同時要問便當</li>
+<li>63. 確認同工餐人數</li>
+<li>64. 舞團團員，敬拜團團員</li></ol></section><section><h2>🏛️ 議政</h2><ol><li>2. 文昌哥需要協調會</li>
+<li>10. 追露出：中視要上傳截圖</li>
+<li>14. 通知車主</li>
+<li>20. 聯繫正威＋週三會議執行＋跨權會工作日誌</li>
+<li>21. 可以請 LISA 幫忙跑圖書館拿預約書還有處理邀請卡，議員的行程</li>
+<li>25. 打開議員信箱，用系統上的 Outlook</li>
+<li>29. Teresa 姪子實習</li>
+<li>55. 黃心華議員連</li>
+<li>57. 自由時報的露出，時間要修正</li>
+<li>59. 曉萍哥的案件</li></ol></section><section><h2>💻 技術</h2><ol><li>9. 捷運上正進行：融資餘額要抓、環狀定位時間、爬蟲台積電三大法人抓證交所、自動評分寫入、分析報告加 sxx 和權重條件</li>
+<li>13. 目標價尋求＋分階搞定</li>
+<li>32. 把 Outlook 的任務救出來</li>
+<li>37. 新的新聞報表要把 YouTube 也放進去，參數要可以選擇哪些關鍵字需要納入馨文的分析</li>
+<li>38. 儀表板更新：技術多空變化 30 天、新聞多空變化 30 天，技術準確率呈現</li>
+<li>39. 儀表板更新：不準確的數據就跳灰色，小數點，欄寬</li>
+<li>40. 回測模組：把上一代的回測方法加入最新的回測模組</li>
+<li>44. 修改回測模組，特別的假日不要跑</li>
+<li>48. 分析 57爆新聞的關鍵字然後進入報表</li>
+<li>49. 修改時間參數來抓，就是 Lambda，標題要顯明係數</li>
+<li>53. 新聞多空分析要改到 GitHub</li></ol></section><section><h2>🏠 生活</h2><ol><li>5. 安排週末時間，安排出來一定要跟太太討論</li>
+<li>7. 全聯帶，哥哥剪頭髮 3/15</li>
+<li>15. 幫嘟嘟剪頭髮 4/14</li>
+<li>26. 孩子任務要每週調整</li>
+<li>56. 整理</li>
+<li>58. 可以用親密之旅來幫助家裡</li>
+<li>65. 工作證當天報到的時候拿</li>
+<li>67. 讓小孩用學習卡來學英文，拍課本</li></ol></section>
+</main>
 <div class="big-wrap">
   <div class="big-top">
     <div class="big-dot-lg" id="bigDot"></div>
@@ -112,11 +182,9 @@ button:hover{background:#f0eeea;}
 </div>
 <div class="fr">
   <button class="fb act" onclick="sf('all',this)">全部</button>
-  <button class="fb" onclick="sf('pray',this)">🙏 禱告靈修</button>
-  <button class="fb" onclick="sf('church',this)">⛪ 教會事工</button>
-  <button class="fb" onclick="sf('council',this)">🏛️ 議員辦公室</button>
-  <button class="fb" onclick="sf('tech',this)">💻 程式技術</button>
-  <button class="fb" onclick="sf('family',this)">👨‍👩‍👧‍👦 家庭生活</button>
+  <button class="fb" onclick="sf('pray',this)">🌱 成長</button>
+  <button class="fb" onclick="sf('church',this)">🤝 社群</button>
+  <button class="fb" onclick="sf('family',this)">🏠 生活</button>
   <button class="fb" onclick="sf('eliminated',this)">🗑️ 剔除</button>
 </div>
 <div class="global-row">
@@ -124,21 +192,20 @@ button:hover{background:#f0eeea;}
   <button onclick="pauseAll()">全部暫停</button>
   <button onclick="resetAll()">全部重置</button>
   <button onclick="applyRanks()">套用排名</button>
+  <button onclick="copyCategory()" id="copyBtn">📋 複製清單</button>
   <button class="bd" onclick="askRestore()">還原預設清單</button>
   <span class="summary" id="summary"></span>
 </div>
 <div id="cfmArea"></div>
 <div class="sbar" id="status"></div>
-<div id="list"></div>
+<article id="list" aria-label="任務清單"></article>
 
 <script>
 const SK='david-tasks-stable';
 const CM={
-  pray:{label:'🙏 禱告靈修',color:'#7C3AED',cls:'cg-pray'},
-  church:{label:'⛪ 教會事工',color:'#9333EA',cls:'cg-church'},
-  council:{label:'🏛️ 議員辦公室',color:'#D97706',cls:'cg-council'},
-  tech:{label:'💻 程式技術',color:'#2563EB',cls:'cg-tech'},
-  family:{label:'👨‍👩‍👧‍👦 家庭生活',color:'#E11D48',cls:'cg-family'},
+  pray:{label:'🌱 成長',color:'#7C3AED',cls:'cg-pray'},
+  church:{label:'🤝 社群',color:'#9333EA',cls:'cg-church'},
+  family:{label:'🏠 生活',color:'#E11D48',cls:'cg-family'},
 };
 const CK=Object.keys(CM);
 const CC={red:'#E24B4A',amber:'#EF9F27',blue:'#378ADD',green:'#639922'};
@@ -146,45 +213,74 @@ const CL={red:'重點',amber:'重要',blue:'一般',green:'備忘'};
 const SW=300;
 
 const DF=[
-  {name:"安排週末時間，安排出來一定要跟太太討論",mins:20,cat:"amber",priority:true,grp:"family",origNum:1},
-  {name:"啟發邀請：士斌、資訊室人員、冠禎哥（重點中的重點）",mins:45,cat:"red",priority:true,grp:"church",origNum:2},
-  {name:"啟發結帳，請款：啟發重點，誰是進入牧養平台者？啟發志工的邀請 麗文",mins:30,cat:"red",priority:true,grp:"church",origNum:3},
-  {name:"拜託 Lisa 把助理電子化",mins:15,cat:"amber",priority:false,grp:"council",origNum:4},
-  {name:"捷運上正進行：融資餘額要抓、環狀定位時間、爬蟲台積電三大法人抓證交所、自動評分寫入、分析報告加 sxx 和權重條件",mins:120,cat:"red",priority:false,grp:"tech",origNum:5},
-  {name:"追露出：中視要上傳截圖",mins:15,cat:"amber",priority:false,grp:"council",origNum:6},
-  {name:"請 Lisa 輸入接觸人數的數字，跑程式之前要先確認，孟諺我幫他多輸入了，藍底的",mins:15,cat:"amber",priority:false,grp:"church",origNum:7},
-  {name:"通知車主",mins:5,cat:"green",priority:false,grp:"council",origNum:8},
-  {name:"週一召集 RPG 禱告會，週四找張主任和士斌哥 RPG，二四銓興哥、冠禎哥，為吉昇禱告",mins:10,cat:"green",priority:false,grp:"pray",origNum:9},
-  {name:"啟發代禱信",mins:45,cat:"red",priority:true,grp:"pray",origNum:10},
-  {name:"寫 RPG 筆記：為了祈禱午餐會和楷譯，孝宜牧師會特別安排見證，預備許多的滿福寶",mins:30,cat:"amber",priority:false,grp:"pray",origNum:11},
-  {name:"領袖班的作業：把握方向，清楚每一次聚會的中心思想與目標，避免天南地北地閒聊",mins:60,cat:"amber",priority:false,grp:"church",origNum:12},
-  {name:"聯繫正威＋週三會議執行＋跨權會工作日誌",mins:30,cat:"amber",priority:false,grp:"council",origNum:13},
-  {name:"呼召：職場主日 06/07，BSH、晨禱、啟發、RPG",mins:20,cat:"amber",priority:false,grp:"pray",origNum:14},
-  {name:"打開議員信箱",mins:10,cat:"blue",priority:false,grp:"council",origNum:15},
-  {name:"啟發：聚會中感恩時間會偏長，好詩歌：更多認識你，RPG 影片聲音太小，拜託麗文姐擦桌子",mins:15,cat:"amber",priority:false,grp:"church",origNum:16},
-  {name:"把 Outlook 的任務救出來",mins:20,cat:"amber",priority:false,grp:"tech",origNum:17},
-  {name:"儀表板更新，把新聞的分析模組做出來",mins:60,cat:"red",priority:false,grp:"tech",origNum:18},
-  {name:"新的新聞報表要把 YouTube 也放進去，參數要可以選擇哪些關鍵字需要納入馨文的分析",mins:45,cat:"red",priority:false,grp:"tech",origNum:19},
-  {name:"儀表板更新：技術多空變化 30 天、新聞多空變化 30 天，技術準確率呈現",mins:60,cat:"red",priority:false,grp:"tech",origNum:20},
-  {name:"儀表板更新：不準確的數據就跳灰色",mins:30,cat:"amber",priority:false,grp:"tech",origNum:21},
-  {name:"回測模組：把上一代的回測方法加入最新的回測模組",mins:60,cat:"red",priority:false,grp:"tech",origNum:22},
-  {name:"要問同工覺得還可以邀請誰",mins:10,cat:"blue",priority:false,grp:"church",origNum:23},
-  {name:"開發連結，稍遠的 BEST 模式：楷譯 翔逸",mins:15,cat:"amber",priority:false,grp:"church",origNum:24},
-  {name:"工作包含下載啟發影片、擺盤",mins:15,cat:"amber",priority:false,grp:"church",origNum:25},
-  {name:"修改回測模組，特別的假日不要跑",mins:30,cat:"amber",priority:false,grp:"tech",origNum:26},
-  {name:"浩田：禱告、啟發、程式開發",mins:15,cat:"amber",priority:false,grp:"pray",origNum:27},
-  {name:"下週每一組要報告進展，人力和進度要清楚",mins:15,cat:"amber",priority:false,grp:"church",origNum:28},
-  {name:"問弘遠：資源回收種類，另外一台不秤重？工業垃圾",mins:15,cat:"blue",priority:false,grp:"council",origNum:29},
-  {name:"分析 57爆新聞的關鍵字然後進入報表",mins:30,cat:"amber",priority:false,grp:"tech",origNum:30},
-  {name:"修改時間參數來抓",mins:20,cat:"amber",priority:false,grp:"tech",origNum:31},
-  {name:"整理出禱告儀表板",mins:30,cat:"amber",priority:false,grp:"pray",origNum:32},
-  {name:"新聞多空分析要改到 GitHub",mins:20,cat:"amber",priority:false,grp:"tech",origNum:33},
-  {name:"自由時報的露出，時間要修正",mins:15,cat:"amber",priority:false,grp:"council",origNum:34},
-  {name:"買煮蛋器",mins:5,cat:"green",priority:false,grp:"family",origNum:35},
-  {name:"全聯帶，哥哥剪頭髮 3/15",mins:10,cat:"green",priority:false,grp:"family",origNum:36},
-  {name:"幫嘟嘟剪頭髮 4/14",mins:10,cat:"green",priority:false,grp:"family",origNum:37},
-  {name:"孩子任務要每週調整",mins:10,cat:"green",priority:false,grp:"family",origNum:38},
-  {name:"聚會完要分享詩歌連結，聚會的時候沒時間吃飯怎麼解決",mins:10,cat:"green",priority:false,grp:"pray",origNum:39},
+  {name:"要問同工覺得還可以邀請誰",mins:10,cat:"blue",priority:false,grp:"church",origNum:1},
+  {name:"文昌哥需要協調會",mins:15,cat:"amber",priority:false,grp:"council",origNum:2},
+  {name:"啟發：呼召人來受洗，高雄市議會受洗的見證",mins:20,cat:"amber",priority:false,grp:"church",origNum:3},
+  {name:"會而不議，議而不決，決而不行",mins:10,cat:"amber",priority:false,grp:"church",origNum:4},
+  {name:"安排週末時間，安排出來一定要跟太太討論",mins:20,cat:"amber",priority:true,grp:"family",origNum:5},
+  {name:"啟發邀請：士斌、資訊室人員、冠禎哥（重點中的重點）",mins:45,cat:"red",priority:true,grp:"church",origNum:6},
+  {name:"全聯帶，哥哥剪頭髮 3/15",mins:10,cat:"green",priority:false,grp:"family",origNum:7},
+  {name:"啟發結帳，請款：啟發重點，誰是進入牧養平台者？啟發志工的邀請 麗文",mins:30,cat:"red",priority:true,grp:"church",origNum:8},
+  {name:"捷運上正進行：融資餘額要抓、環狀定位時間、爬蟲台積電三大法人抓證交所、自動評分寫入、分析報告加 sxx 和權重條件",mins:120,cat:"red",priority:false,grp:"tech",origNum:9},
+  {name:"追露出：中視要上傳截圖",mins:15,cat:"amber",priority:false,grp:"council",origNum:10},
+  {name:"找仕明哥 RPG",mins:10,cat:"blue",priority:false,grp:"pray",origNum:11},
+  {name:"主禮筆記",mins:20,cat:"amber",priority:false,grp:"church",origNum:12},
+  {name:"目標價尋求＋分階搞定",mins:45,cat:"amber",priority:false,grp:"tech",origNum:13},
+  {name:"通知車主",mins:5,cat:"green",priority:false,grp:"council",origNum:14},
+  {name:"幫嘟嘟剪頭髮 4/14",mins:10,cat:"green",priority:false,grp:"family",origNum:15},
+  {name:"週一召集 RPG 禱告會，週四找張主任和士斌哥 RPG，二四銓興哥、冠禎哥，為吉昇禱告",mins:10,cat:"green",priority:false,grp:"pray",origNum:16},
+  {name:"啟發代禱信",mins:45,cat:"red",priority:true,grp:"pray",origNum:17},
+  {name:"寫 RPG 筆記：為了祈禱午餐會和楷譯，孝宜牧師會特別安排見證，預備許多的滿福寶",mins:30,cat:"amber",priority:false,grp:"pray",origNum:18},
+  {name:"領袖班的作業：把握方向，清楚每一次聚會的中心思想與目標，避免天南地北地閒聊",mins:60,cat:"amber",priority:false,grp:"church",origNum:19},
+  {name:"聯繫正威＋週三會議執行＋跨權會工作日誌",mins:30,cat:"amber",priority:false,grp:"council",origNum:20},
+  {name:"可以請 LISA 幫忙跑圖書館拿預約書還有處理邀請卡，議員的行程",mins:10,cat:"blue",priority:false,grp:"council",origNum:21},
+  {name:"找世德當同工：關心世德",mins:15,cat:"blue",priority:false,grp:"church",origNum:22},
+  {name:"呼召：職場主日 06/07，BSH、晨禱、啟發、RPG",mins:20,cat:"amber",priority:false,grp:"church",origNum:23},
+  {name:"下午有手機課的時候豪雷過來：豪雷政宏 RPG＋宗諺＋炳傑楷議 5/22，電話上跟宗諺 RPG＋問禱告事項，可以請他來我們研究室",mins:20,cat:"blue",priority:false,grp:"church",origNum:24},
+  {name:"打開議員信箱，用系統上的 Outlook",mins:10,cat:"blue",priority:false,grp:"council",origNum:25},
+  {name:"孩子任務要每週調整",mins:10,cat:"green",priority:false,grp:"family",origNum:26},
+  {name:"建管處秀華要 RPG",mins:10,cat:"blue",priority:false,grp:"church",origNum:27},
+  {name:"約同工 12:15 週四",mins:5,cat:"blue",priority:false,grp:"church",origNum:28},
+  {name:"Teresa 姪子實習",mins:15,cat:"blue",priority:false,grp:"council",origNum:29},
+  {name:"預備參加週四的弟兄小組 5/21：哥哥姊姊是第一個困難",mins:20,cat:"amber",priority:false,grp:"church",origNum:30},
+  {name:"啟發：聚會中感恩時間會偏長，好詩歌：更多認識你，RPG 影片聲音太小，拜託麗文姐擦桌子",mins:15,cat:"amber",priority:false,grp:"church",origNum:31},
+  {name:"把 Outlook 的任務救出來",mins:20,cat:"amber",priority:false,grp:"tech",origNum:32},
+  {name:"可以找吉昇莊敬一起 RPG",mins:10,cat:"blue",priority:false,grp:"pray",origNum:33},
+  {name:"聚會點心杯子要定，如果是喝茶的話，邀請秀華進來啟發 RPG",mins:15,cat:"amber",priority:false,grp:"church",origNum:34},
+  {name:"禱告要不要進入信望愛",mins:10,cat:"green",priority:false,grp:"pray",origNum:35},
+  {name:"記得要約清明追思，要分享族譜、家族建造",mins:15,cat:"green",priority:false,grp:"pray",origNum:36},
+  {name:"新的新聞報表要把 YouTube 也放進去，參數要可以選擇哪些關鍵字需要納入馨文的分析",mins:45,cat:"red",priority:false,grp:"tech",origNum:37},
+  {name:"儀表板更新：技術多空變化 30 天、新聞多空變化 30 天，技術準確率呈現",mins:60,cat:"red",priority:false,grp:"tech",origNum:38},
+  {name:"儀表板更新：不準確的數據就跳灰色，小數點，欄寬",mins:30,cat:"amber",priority:false,grp:"tech",origNum:39},
+  {name:"回測模組：把上一代的回測方法加入最新的回測模組",mins:60,cat:"red",priority:false,grp:"tech",origNum:40},
+  {name:"更新抗癌禱告",mins:10,cat:"green",priority:false,grp:"pray",origNum:41},
+  {name:"開發連結，稍遠的 BEST 模式：楷譯 翔逸",mins:15,cat:"amber",priority:false,grp:"church",origNum:42},
+  {name:"確認新希望 2025 年 3 月的奉獻",mins:10,cat:"amber",priority:false,grp:"church",origNum:43},
+  {name:"修改回測模組，特別的假日不要跑",mins:30,cat:"amber",priority:false,grp:"tech",origNum:44},
+  {name:"浩田：禱告、啟發、程式開發",mins:15,cat:"amber",priority:false,grp:"church",origNum:45},
+  {name:"跨組要協調的東西，答案要出來",mins:15,cat:"amber",priority:false,grp:"church",origNum:46},
+  {name:"下週每一組要報告進展，人力和進度要清楚",mins:15,cat:"amber",priority:false,grp:"church",origNum:47},
+  {name:"分析 57爆新聞的關鍵字然後進入報表",mins:30,cat:"amber",priority:false,grp:"tech",origNum:48},
+  {name:"修改時間參數來抓，就是 Lambda，標題要顯明係數",mins:20,cat:"amber",priority:false,grp:"tech",origNum:49},
+  {name:"為了靈命突破，我要求的恩典是：領袖興起 1+3 穩定",mins:10,cat:"green",priority:false,grp:"pray",origNum:50},
+  {name:"整理出禱告儀表板",mins:30,cat:"amber",priority:false,grp:"pray",origNum:51},
+  {name:"邀請啟發的同時要問便當",mins:5,cat:"green",priority:false,grp:"church",origNum:52},
+  {name:"新聞多空分析要改到 GitHub",mins:20,cat:"amber",priority:false,grp:"tech",origNum:53},
+  {name:"可以的呼召：晨禱",mins:10,cat:"green",priority:false,grp:"pray",origNum:54},
+  {name:"黃心華議員連",mins:10,cat:"blue",priority:false,grp:"council",origNum:55},
+  {name:"整理",mins:15,cat:"green",priority:false,grp:"family",origNum:56},
+  {name:"自由時報的露出，時間要修正",mins:15,cat:"amber",priority:false,grp:"council",origNum:57},
+  {name:"可以用親密之旅來幫助家裡",mins:15,cat:"amber",priority:false,grp:"family",origNum:58},
+  {name:"曉萍哥的案件",mins:20,cat:"amber",priority:false,grp:"council",origNum:59},
+  {name:"豪雷：週六沒有咖就來晨禱",mins:5,cat:"green",priority:false,grp:"pray",origNum:60},
+  {name:"確認有多少人會為你禱告",mins:10,cat:"green",priority:false,grp:"pray",origNum:61},
+  {name:"2033年成為怎麼樣的人，你怕啥，瓶頸是啥",mins:20,cat:"amber",priority:false,grp:"pray",origNum:62},
+  {name:"確認同工餐人數",mins:5,cat:"green",priority:false,grp:"church",origNum:63},
+  {name:"舞團團員，敬拜團團員",mins:10,cat:"blue",priority:false,grp:"church",origNum:64},
+  {name:"工作證當天報到的時候拿",mins:5,cat:"green",priority:false,grp:"family",origNum:65},
+  {name:"呼召詩舜哥：願不願意跟耶穌禱告",mins:10,cat:"blue",priority:false,grp:"pray",origNum:66},
+  {name:"讓小孩用學習卡來學英文，拍課本",mins:15,cat:"amber",priority:false,grp:"family",origNum:67},
+  {name:"https://www.youtube.com/watch?v=X4Ujyk2UcEg",mins:15,cat:"green",priority:false,grp:"pray",origNum:68},
 ];
 
 const API='https://script.google.com/macros/s/AKfycby76QenFGRUIJeA7wj-rX2MkmVLYRmEG7euRsIeCgDlHuFgnfkbadvAanJFSFwX2Z0T0Q/exec';
@@ -430,6 +526,18 @@ function dt(u){
   const t=tasks.find(x=>x.uid===u);if(!t)return;
   if(timers[u]){clearInterval(timers[u]);delete timers[u];}
   tasks=tasks.filter(x=>x.uid!==u);save();ss('已刪除，重新整理不會復原。');render();
+}
+
+function copyCategory(){
+  const grp = filt==='all'||filt==='eliminated' ? null : filt;
+  const label = grp ? (CM[grp]?CM[grp].label:grp) : '全部';
+  const list = tasks.filter(t=>!t.eliminated && (grp?t.grp===grp:true));
+  const text = list.map((t,i)=>`${t.origNum||i+1}. ${t.name}`).join('\n');
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.getElementById('copyBtn');
+    btn.textContent='✓ 已複製';
+    setTimeout(()=>btn.textContent='📋 複製清單',2000);
+  }).catch(()=>ss('複製失敗，請手動選取'));
 }
 function startAll(){tasks.filter(t=>!t.eliminated).forEach(t=>so(t.uid));}
 function pauseAll(){tasks.filter(t=>t.state==='running').forEach(t=>po(t.uid));}
