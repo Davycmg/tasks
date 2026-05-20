@@ -27,6 +27,11 @@
   --purple:    #7c3aed;
   --purple-bg: rgba(124,58,237,0.08);
   --accent:    #2563eb;
+
+  /* ▼ [修改] r值顏色：r≥1 淡粉紅，r<1 深綠 */
+  --r-bear:     rgba(220,53,69,0.30);   /* r≥1：淡粉紅 */
+  --r-bear-bar: rgba(220,53,69,0.20);   /* r≥1 相關條：更淡 */
+  --r-bull:     #16a06a;                /* r<1：深綠 */
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -40,7 +45,6 @@ body {
   padding: 20px 16px 40px;
 }
 
-/* ── Header ── */
 .header {
   display: flex;
   align-items: flex-end;
@@ -62,9 +66,7 @@ body {
   margin-top: 3px;
   font-family: 'JetBrains Mono', monospace;
 }
-.header-right {
-  text-align: right;
-}
+.header-right { text-align: right; }
 #status-badge {
   display: inline-flex;
   align-items: center;
@@ -91,7 +93,6 @@ body {
   margin-top: 4px;
 }
 
-/* ── Loading / Error ── */
 #loading-msg {
   text-align: center;
   padding: 60px 20px;
@@ -101,7 +102,6 @@ body {
   letter-spacing: 0.05em;
 }
 
-/* ── Table wrapper ── */
 .table-wrap {
   overflow-x: auto;
   border: 1px solid var(--border2);
@@ -116,7 +116,6 @@ table {
   table-layout: fixed;
 }
 
-/* ── Header rows ── */
 thead tr.gh th {
   background: var(--bg3);
   font-size: 10px;
@@ -138,7 +137,6 @@ thead tr.sh th {
   letter-spacing: 0.03em;
 }
 
-/* ── Body rows ── */
 tbody tr.data-row {
   border-bottom: 1px solid var(--border);
   cursor: pointer;
@@ -166,22 +164,19 @@ td.date-cell {
 td.score-cell { font-size: 11px; font-weight: 500; }
 td.price-cell { font-size: 11px; }
 
-/* ── Score colors: r>=1 紅(空方), r<1 綠(多方) ── */
-.v-bull { color: var(--bear); }
-.v-bear { color: var(--bull); }
+/* ▼ [修改] r值顏色 CSS class：r≥1 淡粉紅，r<1 深綠 */
+.v-bull { color: var(--r-bull); }   /* r<1 深綠 */
+.v-bear { color: var(--r-bear); }   /* r≥1 淡粉紅 */
 .v-neut { color: var(--text3); }
 .v-null { color: var(--text3); opacity: 0.4; }
 .chg-up   { color: var(--bear); }
 .chg-down { color: var(--bull); }
 .chg-zero { color: var(--text3); }
 
+.bl  { border-left: 1px solid var(--border2) !important; }
+.br  { border-right: 1px solid var(--border2) !important; }
+.bl-s{ border-left: 1px solid var(--border) !important; }
 
-/* ── Borders ── */
-.bl { border-left: 1px solid var(--border2) !important; }
-.br { border-right: 1px solid var(--border2) !important; }
-.bl-s { border-left: 1px solid var(--border) !important; }
-
-/* ── News tag ── */
 .tag {
   display: inline-flex;
   align-items: center;
@@ -200,7 +195,6 @@ td.price-cell { font-size: 11px; }
 .tag-bear { background: var(--bear-bg); color: var(--bear); }
 .tag-neut { background: var(--bg3); color: var(--neut); }
 
-/* ── Detail row ── */
 tr.detail-row { display: none; }
 tr.detail-row.open { display: table-row; }
 tr.detail-row td {
@@ -230,11 +224,6 @@ tr.detail-row td {
   font-weight: 600;
   color: var(--purple);
 }
-.detail-chg {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  font-weight: 500;
-}
 .detail-news-link {
   margin-left: auto;
   font-size: 10px;
@@ -246,6 +235,25 @@ tr.detail-row td {
   font-family: 'JetBrains Mono', monospace;
 }
 .detail-news-link:hover { background: var(--blue-bg); }
+
+.lambda-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.lambda-group { display: flex; flex-direction: column; gap: 5px; }
+.lambda-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--text3);
+  letter-spacing: 0.05em;
+  padding-bottom: 2px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+/* ▼ 優先組的 label 加亮 */
+.lambda-label.priority {
+  color: #fbbf24;
+}
 .detail-cards {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -264,10 +272,7 @@ tr.detail-row td {
   margin-bottom: 5px;
   letter-spacing: 0.03em;
 }
-.detail-card-vals {
-  display: flex;
-  gap: 6px;
-}
+.detail-card-vals { display: flex; gap: 6px; }
 .detail-val {
   font-size: 11px;
   font-weight: 600;
@@ -281,7 +286,6 @@ tr.detail-row td {
   margin-top: 1px;
 }
 
-/* ── Legend ── */
 .legend {
   margin-top: 12px;
   font-size: 10px;
@@ -352,11 +356,11 @@ tr.detail-row td {
   </div>
 
   <div class="legend">
-    <span><span style="color:var(--bear)">●</span> r值 ≥ 1 空方優勢</span>
-    <span><span style="color:var(--bull)">●</span> r值 &lt; 1 多方優勢</span>
-    <span><span style="color:var(--text3)">●</span> 中間地帶</span>
-    <span>// 右側細條：深=強相關 淺=弱相關 無條=不相關（字色淺）</span>
-    <span>// 點擊列展開細節</span>
+    <span><span style="color:var(--r-bear)">●</span> r值 ≥ 1 空方（淡紅）</span>
+    <span><span style="color:var(--r-bull)">●</span> r值 &lt; 1 多方（深綠）</span>
+    <span>// 右側細條：深=強相關 淺=弱相關 無條=不相關</span>
+    <span>// 展開後 <span style="color:#fbbf24">黃色</span> 標題 = 主列使用的優先組</span>
+    <span>// 點擊列展開查看各 λ 組數值</span>
   </div>
 </div>
 
@@ -367,49 +371,62 @@ const DAY   = ["2330日分析","TPE日分析","KOSPI日分析"];
 const NIGHT = ["tsm日分析","nvda日分析","納斯日分析","N225日分析"];
 const LABELS = {"2330日分析":"2330","TPE日分析":"TPE","KOSPI日分析":"KOSPI","tsm日分析":"TSM","nvda日分析":"NVDA","納斯日分析":"NASDAQ","N225日分析":"N225"};
 
-// ── 評分顏色 ──
-function vClass(v) {
-  if (v === null || v === undefined) return 'v-null';
-  if (v >= 1) return 'v-bull';   // 紅
-  if (v < 1)  return 'v-bear';  // 綠
-  return 'v-neut';
+// ▼ [修改] r值顏色：r≥1 淡粉紅，r<1 深綠，跟隨相關性強度
+function rColor(isBull, alpha) {
+  // isBull = (r < 1) = 多方
+  if (isBull) {
+    // 深綠，alpha 控制亮度（corr.match=false 時傳 0.3，match=true 傳 1.0）
+    var a = alpha !== undefined ? alpha : 1.0;
+    if (a >= 1.0) return '#16a06a';
+    return 'rgba(22,160,106,' + a.toFixed(2) + ')';
+  } else {
+    // 淡粉紅，base alpha 0.30，相關性強時加深到 0.55
+    var a = alpha !== undefined ? alpha : 1.0;
+    var finalAlpha = 0.30 + a * 0.25;  // 0.30 ~ 0.55
+    return 'rgba(220,53,69,' + finalAlpha.toFixed(2) + ')';
+  }
 }
 
+function vClass(v) {
+  if (v === null || v === undefined) return 'v-null';
+  if (v >= 1) return 'v-bear';
+  return 'v-bull';
+}
+
+// ▼ [修改] vHtml：r≥1 淡粉紅，r<1 深綠，細條跟隨同色
 function vHtml(v, corr) {
   if (v === null || v === undefined) return '<span class="v-null">—</span>';
-  var isBull = (v >= 1);
-  var baseColor = isBull ? '#dc3545' : '#16a06a';
-  var numSpan = '<span style="color:' + baseColor + ';font-weight:500">' + v + '</span>';
+  var isBull = (v < 1);  // 多方 = r < 1
 
-  // corr = null → 只顯示數字，無右條
   if (corr === null || corr === undefined) {
-    return '<span style="display:inline-flex;align-items:center;gap:2px">' + numSpan + '</span>';
+    // 無相關性資料：用基本色
+    var c = rColor(isBull, 1.0);
+    return '<span style="color:' + c + ';font-weight:500">' + v + '</span>';
   }
 
-  var borderColor;
-  if (corr.match) {
-    // 相關：右條深淺依 strength
-    var alpha = 0.25 + (corr.strength || 0) * 0.75;
-    borderColor = isBull
-      ? 'rgba(220,53,69,' + alpha.toFixed(2) + ')'
-      : 'rgba(22,160,106,' + alpha.toFixed(2) + ')';
-  } else {
-    // 不相關：數字變淺，無右條
-    var dimColor = isBull ? 'rgba(220,53,69,0.25)' : 'rgba(22,160,106,0.25)';
-    return '<span style="color:' + dimColor + ';font-weight:500">' + v + '</span>';
+  if (!corr.match) {
+    // 相關性不符：數字用淡色，無細條
+    var c = rColor(isBull, 0.0);
+    return '<span style="color:' + c + ';font-weight:500">' + v + '</span>';
   }
+
+  // 相關性符合：數字 + 細條，強度影響深淺
+  var strength = corr.strength || 0;
+  var numColor = rColor(isBull, strength);
+  var barAlpha = 0.25 + strength * 0.75;
+  var barColor = isBull
+    ? 'rgba(22,160,106,' + barAlpha.toFixed(2) + ')'
+    : 'rgba(220,53,69,' + (0.20 + strength * 0.30).toFixed(2) + ')';
 
   return '<span style="display:inline-flex;align-items:stretch;gap:2px">'
-    + numSpan
-    + '<span style="display:inline-block;width:3px;border-radius:2px;background:' + borderColor + ';align-self:stretch"></span>'
+    + '<span style="color:' + numColor + ';font-weight:500">' + v + '</span>'
+    + '<span style="display:inline-block;width:3px;border-radius:2px;background:' + barColor + ';align-self:stretch"></span>'
     + '</span>';
 }
 
-// ── 新聞標籤 ──
 function newsTag(n) {
   if (!n || !n.direction) return '<span class="tag tag-neut">—</span>';
   var d = n.direction, u = n.url || '';
-  // direction 可能是 "🟢 看多" / "🔴 看空" / "⚪ 中立"
   var isBull = d.indexOf('看多') >= 0;
   var isBear = d.indexOf('看空') >= 0;
   var cls = isBull ? 'tag-bull' : isBear ? 'tag-bear' : 'tag-neut';
@@ -419,16 +436,77 @@ function newsTag(n) {
   return '<span class="tag ' + cls + '">' + d + '</span>';
 }
 
-// ── TPE 漲跌：正漲紅，負跌綠 ──
 function chgHtml(chg) {
   if (chg === null || chg === undefined) return '<span class="v-null">—</span>';
   var cls = chg > 0 ? 'chg-up' : chg < 0 ? 'chg-down' : 'chg-zero';
   var prefix = chg > 0 ? '+' : '';
-  var chgRounded = Math.round(chg);
-  return '<span class="' + cls + '">' + prefix + chgRounded + '</span>';
+  return '<span class="' + cls + '">' + prefix + Math.round(chg) + '</span>';
 }
 
-// ── 渲染 ──
+// ▼ [修改] 展開區：優先組排最上面並標黃，其餘依 lambda 升序
+function lambdaGroupsHtml(row) {
+  var allTargets = DAY.concat(NIGHT);
+
+  // 收集 all_lambdas（已由 doGet 排好：優先組第一）
+  // 從第一個標的取 lambda 順序
+  var firstTarget = allTargets[0];
+  var firstScores = row[firstTarget] || {};
+  var allLambdas  = firstScores.all_lambdas || [];
+
+  if (allLambdas.length === 0) {
+    return singleGroupHtml(row, allTargets);
+  }
+
+  var html = '<div class="lambda-groups">';
+  allLambdas.forEach(function(lamEntry) {
+    var lam      = lamEntry.lambda;
+    var isPriority = lamEntry.priority;
+    var lamLabel = 'λ = ' + lam + (isPriority ? ' ★ 主列採用' : '');
+    var labelCls = isPriority ? 'lambda-label priority' : 'lambda-label';
+
+    html += '<div class="lambda-group">';
+    html += '<div class="' + labelCls + '">── ' + lamLabel + ' ──</div>';
+    html += '<div class="detail-cards">';
+    allTargets.forEach(function(t) {
+      var s = row[t] || {};
+      var entry = (s.all_lambdas || []).find(function(e){ return e.lambda === lam; });
+      var r1v  = entry ? entry.r1  : null;
+      var r5v  = entry ? entry.r5  : null;
+      var r20v = entry ? entry.r20 : null;
+      html += '<div class="detail-card">';
+      html += '<div class="detail-card-label">' + LABELS[t] + '</div>';
+      html += '<div class="detail-card-vals">';
+      [['r1',r1v],['r5',r5v],['r20',r20v]].forEach(function(pair) {
+        var k = pair[0], v = pair[1];
+        var cls = v !== null && v !== undefined ? vClass(v) : 'v-null';
+        html += '<div class="detail-val ' + cls + '">' + (v !== null && v !== undefined ? v : '—') + '<span>' + k + '</span></div>';
+      });
+      html += '</div></div>';
+    });
+    html += '</div></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function singleGroupHtml(row, allTargets) {
+  var html = '<div class="detail-cards">';
+  allTargets.forEach(function(t) {
+    var s = row[t] || {r1:null, r5:null, r20:null};
+    html += '<div class="detail-card">';
+    html += '<div class="detail-card-label">' + LABELS[t] + '</div>';
+    html += '<div class="detail-card-vals">';
+    ['r1','r5','r20'].forEach(function(k) {
+      var v = s[k];
+      var cls = v !== null && v !== undefined ? vClass(v) : 'v-null';
+      html += '<div class="detail-val ' + cls + '">' + (v !== null && v !== undefined ? v : '—') + '<span>' + k + '</span></div>';
+    });
+    html += '</div></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
 function render(data) {
   var tbody = document.getElementById('tbody');
   var html = '';
@@ -436,11 +514,9 @@ function render(data) {
   data.rows.forEach(function(row, i) {
     var tp = row.tpe_price || {};
 
-    // — data row —
     html += '<tr class="data-row" onclick="tog(' + i + ')">';
     html += '<td class="date-cell">' + row.date + '</td>';
 
-    // 日盤三檔 r1/r5/r20
     DAY.forEach(function(t, ti) {
       var s = row[t] || {};
       var lBorder = ti === 0 ? ' bl' : '';
@@ -449,15 +525,11 @@ function render(data) {
       html += '<td class="score-cell br">'+ vHtml(s.r20, s.corr_r20) + '</td>';
     });
 
-    // TPE 收盤 & 漲跌
     var closeStr = (tp.close !== null && tp.close !== undefined) ? Math.round(tp.close).toLocaleString() : '—';
     html += '<td class="price-cell br" style="color:var(--purple)">' + closeStr + '</td>';
     html += '<td class="price-cell br">' + chgHtml(tp.change) + '</td>';
-
-    // 新聞
     html += '<td class="br" style="padding:0 4px">' + newsTag(row.news) + '</td>';
 
-    // 夜盤四檔 r1/r5/r20
     NIGHT.forEach(function(t) {
       var s = row[t] || {};
       html += '<td class="score-cell bl-s">' + vHtml(s.r1,  s.corr_r1)  + '</td>';
@@ -467,39 +539,24 @@ function render(data) {
 
     html += '</tr>';
 
-    // — detail row —
     html += '<tr class="detail-row" id="dr' + i + '"><td colspan="25">';
     html += '<div class="detail-inner">';
     html += '<div class="detail-top">';
     html += '<span class="detail-date">' + row.date + '</span>';
     if (tp.close !== null && tp.close !== undefined) {
       html += '<span class="detail-tpe">TPE ' + tp.close.toLocaleString() + '</span>';
-      html += '<span class="detail-chg ' + (tp.change > 0 ? 'v-bull' : tp.change < 0 ? 'v-bear' : 'v-neut') + '">' + (tp.change > 0 ? '+' : '') + tp.change + '</span>';
+      html += '<span class="detail-chg ' + (tp.change > 0 ? 'chg-up' : tp.change < 0 ? 'chg-down' : 'chg-zero') + '">' + (tp.change > 0 ? '+' : '') + tp.change + '</span>';
     }
     if (row.news && row.news.url && row.news.url !== '') {
       html += '<a class="detail-news-link" href="' + row.news.url + '" target="_blank" onclick="event.stopPropagation()">↗ 新聞報表</a>';
     }
     html += '</div>';
-
-    html += '<div class="detail-cards">';
-    DAY.concat(NIGHT).forEach(function(t) {
-      var s = row[t] || {r1:null, r5:null, r20:null};
-      html += '<div class="detail-card">';
-      html += '<div class="detail-card-label">' + LABELS[t] + '</div>';
-      html += '<div class="detail-card-vals">';
-      ['r1','r5','r20'].forEach(function(k) {
-        var v = s[k];
-        var cls = v !== null && v !== undefined ? vClass(v) : 'v-null';
-        html += '<div class="detail-val ' + cls + '">' + (v !== null && v !== undefined ? v : '—') + '<span>' + k + '</span></div>';
-      });
-      html += '</div></div>';
-    });
-    html += '</div></div></td></tr>';
+    html += lambdaGroupsHtml(row);
+    html += '</div></td></tr>';
   });
 
   tbody.innerHTML = html;
 
-  // 更新狀態
   document.getElementById('status-dot').className = 'ok';
   document.getElementById('status-text').textContent = data.rows.length + ' 天資料';
   if (data.updated) {
@@ -517,7 +574,6 @@ function tog(i) {
   dr.classList.toggle('open');
 }
 
-// ── Fetch ──
 fetch(API_URL)
   .then(function(r) { return r.json(); })
   .then(function(data) {
