@@ -1,0 +1,222 @@
+
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+.wrap { padding: 1rem 0; }
+.filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.tag { font-size: 12px; padding: 5px 12px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-secondary); cursor: pointer; transition: all 0.15s; }
+.tag.active { background: var(--color-background-info); color: var(--color-text-info); border-color: transparent; font-weight: 500; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+thead th { text-align: left; padding: 8px 10px; font-size: 12px; font-weight: 500; color: var(--color-text-secondary); border-bottom: 0.5px solid var(--color-border-tertiary); white-space: nowrap; }
+tbody tr { border-bottom: 0.5px solid var(--color-border-tertiary); }
+tbody tr:hover { background: var(--color-background-secondary); }
+tbody td { padding: 10px 10px; vertical-align: top; line-height: 1.5; }
+.badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 500; white-space: nowrap; }
+.badge-taipei { background: #E6F1FB; color: #0C447C; }
+.badge-central { background: #EAF3DE; color: #27500A; }
+.badge-both { background: #EEEDFE; color: #3C3489; }
+.amt { font-weight: 500; color: var(--color-text-primary); white-space: nowrap; }
+.note { font-size: 12px; color: var(--color-text-secondary); margin-top: 3px; }
+.stage-pill { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 12px; background: var(--color-background-secondary); color: var(--color-text-secondary); white-space: nowrap; }
+.hidden { display: none; }
+.count-info { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 8px; }
+</style>
+<div class="wrap">
+<h2 class="sr-only">臺北市育兒相關補助總整理表格，含中央與北市加碼項目</h2>
+
+<div class="filter-bar" id="filters">
+  <span class="tag active" data-cat="all">全部</span>
+  <span class="tag" data-cat="taipei">🟦 北市加碼</span>
+  <span class="tag" data-cat="central">🟩 中央補助</span>
+  <span class="tag" data-cat="孕前">孕前</span>
+  <span class="tag" data-cat="孕中">孕中</span>
+  <span class="tag" data-cat="出生">出生</span>
+  <span class="tag" data-cat="0-3歲">0–3歲托育</span>
+  <span class="tag" data-cat="2-5歲">2–5歲幼兒園</span>
+  <span class="tag" data-cat="0-6歲">0–6歲其他</span>
+</div>
+<div class="count-info" id="count-info">顯示全部項目</div>
+
+<table>
+<thead>
+<tr>
+  <th style="width:18%">補助名稱</th>
+  <th style="width:10%">適用階段</th>
+  <th style="width:8%">性質</th>
+  <th style="width:26%">補助金額</th>
+  <th style="width:22%">申請資格重點</th>
+  <th style="width:16%">申辦方式</th>
+</tr>
+</thead>
+<tbody id="tbody">
+</tbody>
+</table>
+</div>
+
+<script>
+const data = [
+  {
+    name: "人工生殖（試管嬰兒）加碼補助",
+    stage: "孕前", cat: "taipei",
+    amt: "每次最高 2.5萬元",
+    note: "每年限申請1次，依實際費用核實",
+    qual: "夫妻任一方設籍北市、受術方44歲以下、符合人工生殖法規範",
+    apply: "療程結束6個月內至台北服務通線上申辦或掛號寄衛生局"
+  },
+  {
+    name: "醫療性凍卵補助",
+    stage: "孕前", cat: "taipei",
+    amt: "最高 1萬元（每人限1次）",
+    note: "北市加碼，針對醫療性需求",
+    qual: "設籍北市女性，因醫療因素（癌症等）需凍卵者",
+    apply: "衛生局 1999分機7112"
+  },
+  {
+    name: "好孕2U孕婦專車補助",
+    stage: "孕中", cat: "taipei",
+    amt: "搭乘計程車費用補助",
+    note: "就醫交通補助",
+    qual: "設籍北市孕婦，孕期就醫使用",
+    apply: "向指定計程車業者申請"
+  },
+  {
+    name: "孕婦唐氏症及子癇前症篩檢補助",
+    stage: "孕中", cat: "taipei",
+    amt: "補助篩檢費用",
+    note: "北市加碼，超出健保給付部分",
+    qual: "設籍北市孕婦",
+    apply: "配合醫療院所辦理"
+  },
+  {
+    name: "生育獎勵金",
+    stage: "出生", cat: "taipei",
+    amt: "第1胎 4萬 / 第2胎 4.5萬 / 第3胎 5萬",
+    note: "出生後60天內申請，父母設籍北市10個月以上",
+    qual: "父或母設籍北市（含新北/基隆）連續10個月以上",
+    apply: "至戶政事務所辦理出生登記時一併申請"
+  },
+  {
+    name: "中央育兒津貼",
+    stage: "0-3歲", cat: "central",
+    amt: "第1胎 5,000元/月 / 第2胎以上 6,000元/月",
+    note: "未使用公共托育者，在家育兒補助",
+    qual: "0–未滿3歲、未使用準公共或公共托育",
+    apply: "社會局或線上申辦"
+  },
+  {
+    name: "公共及準公共托育補助（中央）",
+    stage: "0-3歲", cat: "central",
+    amt: "公托：3,000元/月 / 準公共：最高7,000元/月",
+    note: "衛福部補助基礎，北市加碼疊加於此",
+    qual: "0–未滿3歲，送托公共/準公共機構",
+    apply: "透過托育機構辦理"
+  },
+  {
+    name: "友善托育補助（北市加碼）",
+    stage: "0-3歲", cat: "taipei",
+    amt: "大公托：第1胎2,500/第2胎以上3,000元/月\n小家園：第1胎4,000/第2胎以上6,000元/月\n準公共：第1胎5,000/第2胎以上7,000元/月",
+    note: "疊加中央補助，兒童及父母須設籍北市，送托地點在北市",
+    qual: "已領中央準公共補助 + 父母與兒童皆設籍北市",
+    apply: "親送或掛號至送托機構/居家托育服務中心"
+  },
+  {
+    name: "協力照顧補助（北市加碼）",
+    stage: "0-3歲", cat: "taipei",
+    amt: "結訓/學歷保母：2,000元/月\n證照保母：3,000元/月\n私立托嬰中心：3,000元/月",
+    note: "弱勢家庭可獲4,000–5,000元，所得稅率需低於20%",
+    qual: "每週托育30小時以上，設籍北市，所得稅率未達20%",
+    apply: "親送至居家托育服務中心或托嬰中心"
+  },
+  {
+    name: "非營利/準公共幼兒園補助",
+    stage: "2-5歲", cat: "central",
+    amt: "依幼兒園收費、家庭所得不同，減輕學費負擔",
+    note: "基本每月約3,000–11,000元補助，依所得分級",
+    qual: "2–未滿5歲就讀非營利或準公共幼兒園",
+    apply: "透過幼兒園辦理"
+  },
+  {
+    name: "私立幼兒園差額補助（寶貝我愛你）",
+    stage: "2-5歲", cat: "taipei",
+    amt: "補助私立與準公共收費差額，最高每月數千元",
+    note: "北市獨有，降低私立幼兒園費用負擔",
+    qual: "2–未滿5歲就讀北市私立幼兒園，設籍北市",
+    apply: "透過幼兒園辦理，向社會局申請"
+  },
+  {
+    name: "5歲幼兒學費補助",
+    stage: "2-5歲", cat: "central",
+    amt: "就讀公立：全免學費 / 非營利/準公共：近全免 / 私立：中央補助後再由北市補差額",
+    note: "5歲強制教育延伸補助",
+    qual: "5歲幼兒就讀各類幼兒園",
+    apply: "透過幼兒園辦理"
+  },
+  {
+    name: "學齡前兒童早期療育補助",
+    stage: "0-6歲", cat: "taipei",
+    amt: "療育費用補助（依評估結果核給）",
+    note: "發展遲緩兒童專用",
+    qual: "0–6歲、經評估確認發展遲緩、設籍北市",
+    apply: "社會局 1999 分機辦理"
+  },
+  {
+    name: "兒童醫療補助",
+    stage: "0-6歲", cat: "taipei",
+    amt: "門診自付額補助（健保卡就醫免部分負擔）",
+    note: "6歲以下北市兒童就醫補助",
+    qual: "6歲以下、設籍北市",
+    apply: "持健保卡就醫時自動適用"
+  },
+];
+
+const catMap = {
+  taipei: "badge-taipei",
+  central: "badge-central",
+  both: "badge-both"
+};
+const catLabel = {
+  taipei: "北市加碼",
+  central: "中央補助",
+  both: "中央＋北市"
+};
+const stageFilter = { "孕前": "孕前", "孕中": "孕中", "出生": "出生", "0-3歲": "0-3歲", "2-5歲": "2-5歲", "0-6歲": "0-6歲" };
+
+function render(filter) {
+  const tbody = document.getElementById("tbody");
+  tbody.innerHTML = "";
+  let count = 0;
+  data.forEach(d => {
+    let show = false;
+    if (filter === "all") show = true;
+    else if (filter === "taipei") show = d.cat === "taipei";
+    else if (filter === "central") show = d.cat === "central";
+    else show = d.stage.includes(filter);
+    if (!show) return;
+    count++;
+    const amtLines = d.amt.split("\n").map(l => `<div>${l}</div>`).join("");
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td style="font-weight:500;color:var(--color-text-primary)">${d.name}</td>
+      <td><span class="stage-pill">${d.stage}</span></td>
+      <td><span class="badge ${catMap[d.cat]}">${catLabel[d.cat]}</span></td>
+      <td><div class="amt">${amtLines}</div>${d.note ? `<div class="note">${d.note}</div>` : ""}</td>
+      <td style="font-size:13px;color:var(--color-text-secondary)">${d.qual}</td>
+      <td style="font-size:13px;color:var(--color-text-secondary)">${d.apply}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+  document.getElementById("count-info").textContent = `共 ${count} 項補助`;
+}
+
+document.getElementById("filters").addEventListener("click", e => {
+  const tag = e.target.closest(".tag");
+  if (!tag) return;
+  document.querySelectorAll(".tag").forEach(t => t.classList.remove("active"));
+  tag.classList.add("active");
+  render(tag.dataset.cat);
+});
+
+render("all");
+</script>
