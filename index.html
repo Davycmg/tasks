@@ -8,7 +8,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏱️</text></svg>">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f0;color:#1a1a1a;padding:1rem;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f0;color:#1a1a1a;padding:1rem;user-select:text;-webkit-user-select:text;}
 .big-wrap{background:#fff;border:0.5px solid #ddd;border-radius:0 0 16px 16px;padding:1.2rem 1.5rem;margin-bottom:1rem;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.06);}
 .big-top{display:flex;align-items:center;gap:1rem;}
 .big-dot-lg{width:14px;height:14px;border-radius:50%;flex-shrink:0;}
@@ -41,12 +41,12 @@ h1{font-size:15px;font-weight:500;color:#444;margin-bottom:.5rem;}
 .tc.dov{border-top:2.5px solid #378ADD;}
 .tc.drg{opacity:.45;}
 .mr{display:flex;align-items:center;gap:8px;}
-.dh{color:#bbb;font-size:15px;cursor:grab;flex-shrink:0;padding:0 2px;}
+.dh{color:#bbb;font-size:15px;cursor:grab;flex-shrink:0;padding:0 2px;user-select:none;-webkit-user-select:none;}
 .ri{width:36px;font-size:12px;padding:3px 4px;border-radius:6px;border:0.5px solid #ccc;background:#fafafa;color:#444;text-align:center;flex-shrink:0;}
 .ri:focus{outline:none;border-color:#378ADD;}
 .cb{width:4px;border-radius:2px;align-self:stretch;flex-shrink:0;min-height:34px;}
-.ti{flex:1;min-width:0;}
-.tn{font-size:13px;font-weight:500;color:#1a1a1a;line-height:1.4;}
+.ti{flex:1;min-width:0;user-select:text;-webkit-user-select:text;}
+.tn{font-size:13px;font-weight:500;color:#1a1a1a;line-height:1.4;user-select:text;-webkit-user-select:text;cursor:text;}
 .tn.eli{text-decoration:line-through;color:#aaa;}
 .tm{font-size:11px;color:#888;margin-top:2px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
 .bg{display:flex;gap:4px;align-items:center;flex-shrink:0;flex-wrap:wrap;}
@@ -334,6 +334,16 @@ function togElim(u){
   if(!t.eliminated){if(timers[u]){clearInterval(timers[u]);delete timers[u];}t.state='idle';}
   t.eliminated=!t.eliminated;save();render();
 }
+
+function startDrag(e,u){
+  const card=document.getElementById('cu'+u);
+  if(!card)return;
+  card.draggable=true;
+  card.addEventListener('dragend',function once(){
+    card.draggable=false;
+    card.removeEventListener('dragend',once);
+  });
+}
 function render(){
   // Don't re-render if a note input is focused (would disrupt typing)
   const focused=document.activeElement;
@@ -351,8 +361,8 @@ function render(){
     if(t.state==='running')cls+=' run';
     if(t.left===0&&!t.eliminated)cls+=' dn';
     if(t.eliminated)cls+=' eli';
-    card.className=cls;card.id='cu'+u;card.draggable=true;
-    card.addEventListener('dragstart',e=>{dsUid=u;card.classList.add('drg');e.dataTransfer.effectAllowed='move';});
+    card.className=cls;card.id='cu'+u;card.draggable=false;
+    card.addEventListener('dragstart',e=>{if(!card.draggable)return e.preventDefault();dsUid=u;card.classList.add('drg');e.dataTransfer.effectAllowed='move';});
     card.addEventListener('dragend',()=>{card.classList.remove('drg');document.querySelectorAll('.tc').forEach(c=>c.classList.remove('dov'));});
     card.addEventListener('dragover',e=>{e.preventDefault();document.querySelectorAll('.tc').forEach(c=>c.classList.remove('dov'));card.classList.add('dov');});
     card.addEventListener('dragleave',()=>card.classList.remove('dov'));
@@ -369,7 +379,7 @@ function render(){
     const gl=CM[t.grp]?CM[t.grp].label:'',gc=CM[t.grp]?CM[t.grp].cls:'';
     card.innerHTML=`
       <div class="mr">
-        <span class="dh">⠿</span>
+        <span class="dh" draggable="true" onmousedown="startDrag(event,${u})">⠿</span>
         <input class="ri" type="text" value="${t.rank||''}" placeholder="#" oninput="sRank(${u},this.value)" onclick="event.stopPropagation()" ondragstart="event.stopPropagation()">
         <div class="cb" style="background:${t.eliminated?'#ccc':CC[t.cat]};"></div>
         <div class="ti">
