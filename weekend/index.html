@@ -8,7 +8,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏱️</text></svg>">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f0;color:#1a1a1a;padding:1rem;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f0;color:#1a1a1a;padding:1rem;user-select:text;-webkit-user-select:text;}
 .big-wrap{background:#fff;border:0.5px solid #ddd;border-radius:0 0 16px 16px;padding:1.2rem 1.5rem;margin-bottom:1rem;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.06);}
 .big-top{display:flex;align-items:center;gap:1rem;}
 .big-dot-lg{width:14px;height:14px;border-radius:50%;flex-shrink:0;}
@@ -41,12 +41,12 @@ h1{font-size:15px;font-weight:500;color:#444;margin-bottom:.5rem;}
 .tc.dov{border-top:2.5px solid #378ADD;}
 .tc.drg{opacity:.45;}
 .mr{display:flex;align-items:center;gap:8px;}
-.dh{color:#bbb;font-size:15px;cursor:grab;flex-shrink:0;padding:0 2px;}
+.dh{color:#bbb;font-size:15px;cursor:grab;flex-shrink:0;padding:0 2px;user-select:none;-webkit-user-select:none;}
 .ri{width:36px;font-size:12px;padding:3px 4px;border-radius:6px;border:0.5px solid #ccc;background:#fafafa;color:#444;text-align:center;flex-shrink:0;}
 .ri:focus{outline:none;border-color:#378ADD;}
 .cb{width:4px;border-radius:2px;align-self:stretch;flex-shrink:0;min-height:34px;}
-.ti{flex:1;min-width:0;}
-.tn{font-size:13px;font-weight:500;color:#1a1a1a;line-height:1.4;}
+.ti{flex:1;min-width:0;user-select:text;-webkit-user-select:text;}
+.tn{font-size:13px;font-weight:500;color:#1a1a1a;line-height:1.4;user-select:text;-webkit-user-select:text;cursor:text;}
 .tn.eli{text-decoration:line-through;color:#aaa;}
 .tm{font-size:11px;color:#888;margin-top:2px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
 .bg{display:flex;gap:4px;align-items:center;flex-shrink:0;flex-wrap:wrap;}
@@ -150,46 +150,36 @@ const CL={red:'重點',amber:'重要',blue:'一般',green:'備忘'};
 const SW=300;
 
 const DF=[
-  {name:"家裡：冷氣濾網 5/17 看還 ok 主臥室",mins:5,cat:"green",priority:false,grp:"home",origNum:1},
-  {name:"放假：記得去看阿嬤，安排在 1400",mins:10,cat:"green",priority:false,grp:"social",origNum:2},
-  {name:"安排週末時間，安排出來一定要跟太太討論",mins:20,cat:"amber",priority:true,grp:"home",origNum:3},
-  {name:"週末跟安祺的 RPG 要安排",mins:10,cat:"blue",priority:false,grp:"faith",origNum:4},
-  {name:"房間收納櫃兩 Salma 整理然後歸到倉庫",mins:20,cat:"green",priority:false,grp:"home",origNum:5},
-  {name:"整理音響兩旁的雜誌架",mins:15,cat:"green",priority:false,grp:"home",origNum:6},
-  {name:"不要再為了小朋友的考試破壞週末的步調安息日等等，是 4/17，問小孩如何幫助",mins:10,cat:"amber",priority:false,grp:"kids",origNum:7},
-  {name:"枕頭套要每一個禮拜清洗：0503 全套清洗",mins:5,cat:"green",priority:false,grp:"home",origNum:8},
-  {name:"幫嘟嘟剪頭髮 4/14",mins:10,cat:"green",priority:false,grp:"kids",origNum:9},
-  {name:"在家裡行走禱告",mins:10,cat:"green",priority:false,grp:"faith",origNum:10},
-  {name:"整理家中的紙類",mins:15,cat:"green",priority:false,grp:"home",origNum:11},
-  {name:"爸爸要過來",mins:10,cat:"green",priority:false,grp:"social",origNum:12},
-  {name:"幫小孩印數學考卷",mins:5,cat:"green",priority:false,grp:"kids",origNum:13},
-  {name:"家庭時間要考慮孩子的體力，下午消耗太多會很累",mins:10,cat:"amber",priority:false,grp:"kids",origNum:14},
-  {name:"週末要設定睡覺時間 21:30",mins:5,cat:"green",priority:false,grp:"home",origNum:15},
-  {name:"整理安祺任務",mins:15,cat:"amber",priority:false,grp:"kids",origNum:16},
-  {name:"家裡所有東西都貼姓名貼，孩子的物品都貼上姓名貼",mins:20,cat:"green",priority:false,grp:"home",origNum:17},
-  {name:"買音樂軟體給慕潔",mins:10,cat:"green",priority:false,grp:"social",origNum:18},
-  {name:"衣服要換季",mins:20,cat:"green",priority:false,grp:"home",origNum:19},
-  {name:"星期天下午或早上，三蘆有電鋼琴可以敬拜",mins:15,cat:"green",priority:false,grp:"faith",origNum:20},
-  {name:"3白1黑 Kallax 檯面整理",mins:20,cat:"green",priority:false,grp:"home",origNum:21},
-  {name:"幫哥哥姐姐買英文單字卡",mins:10,cat:"green",priority:false,grp:"kids",origNum:22},
-  {name:"禱告爸爸可以來職場網絡",mins:10,cat:"green",priority:false,grp:"faith",origNum:23},
-  {name:"用 SEL 幫助我們的家 https://youtu.be/ZsWyztdNDCQ",mins:20,cat:"amber",priority:false,grp:"kids",origNum:24},
-  {name:"晨禱和主日小朋友的番茄鐘要更新",mins:15,cat:"amber",priority:false,grp:"faith",origNum:25},
-  {name:"週末晚上的時間全家討論",mins:10,cat:"green",priority:false,grp:"home",origNum:26},
-  {name:"帶著小朋友來幫風扇潤滑",mins:10,cat:"green",priority:false,grp:"kids",origNum:27},
-  {name:"聖誕慶典可以分兩批，哥哥、姊姊和朋友分兩批",mins:15,cat:"amber",priority:false,grp:"social",origNum:28},
-  {name:"啟發：呼召人來受洗，高雄市議會受洗的見證",mins:20,cat:"amber",priority:false,grp:"faith",origNum:29},
-  {name:"家裡的窗簾要換＋軟條購買",mins:15,cat:"amber",priority:false,grp:"home",origNum:30},
-  {name:"加到哥哥任務：跟大人打招呼",mins:10,cat:"green",priority:false,grp:"kids",origNum:31},
-  {name:"換吉他弦枕 https://maps.app.goo.gl/F7CiJtMb7fvp2rhM8",mins:10,cat:"green",priority:false,grp:"home",origNum:32},
-  {name:"主日和晨禱可以變成簡報跟影片摘要",mins:20,cat:"amber",priority:false,grp:"faith",origNum:33},
-  {name:"去三蘆要固定帶腳踏車架，就可以在永德里下車",mins:5,cat:"green",priority:false,grp:"home",origNum:34},
-  {name:"去阿嬤家可以約漢仁和爸爸",mins:10,cat:"green",priority:false,grp:"social",origNum:35},
-  {name:"愛的存款：我覺得你今天或這週內最可愛的一點",mins:10,cat:"green",priority:false,grp:"social",origNum:36},
-  {name:"走出去是阿福放鬆的方式",mins:10,cat:"green",priority:false,grp:"social",origNum:37},
+  {name:"放假：記得去看阿嬤，安排在 1400",mins:10,cat:"green",priority:false,grp:"social",origNum:1},
+  {name:"安排週末時間，安排出來一定要跟太太討論",mins:20,cat:"amber",priority:true,grp:"home",origNum:2},
+  {name:"週末跟安祺的 RPG 要安排",mins:10,cat:"blue",priority:false,grp:"faith",origNum:3},
+  {name:"不要再為了小朋友的考試破壞週末的步調安息日等等，是 4/17，問小孩如何幫助",mins:10,cat:"amber",priority:false,grp:"kids",origNum:4},
+  {name:"枕頭套要每一個禮拜清洗：0503 全套清洗",mins:5,cat:"green",priority:false,grp:"home",origNum:5},
+  {name:"整理家中的紙類",mins:15,cat:"green",priority:false,grp:"home",origNum:6},
+  {name:"幫小孩印數學考卷",mins:5,cat:"green",priority:false,grp:"kids",origNum:7},
+  {name:"家庭時間要考慮孩子的體力，下午消耗太多會很累",mins:10,cat:"amber",priority:false,grp:"kids",origNum:8},
+  {name:"整理安祺任務",mins:15,cat:"amber",priority:false,grp:"kids",origNum:9},
+  {name:"家裡所有東西都貼姓名貼，孩子的物品都貼上姓名貼",mins:20,cat:"green",priority:false,grp:"home",origNum:10},
+  {name:"買音樂軟體給慕潔",mins:10,cat:"green",priority:false,grp:"social",origNum:11},
+  {name:"星期天下午或早上，三蘆有電鋼琴可以敬拜",mins:15,cat:"green",priority:false,grp:"faith",origNum:12},
+  {name:"3白1黑 Kallax 檯面整理",mins:20,cat:"green",priority:false,grp:"home",origNum:13},
+  {name:"晨禱和主日小朋友的番茄鐘要更新",mins:15,cat:"amber",priority:false,grp:"faith",origNum:14},
+  {name:"帶著小朋友來幫風扇潤滑",mins:10,cat:"green",priority:false,grp:"kids",origNum:15},
+  {name:"聖誕慶典可以分兩批，哥哥、姊姊和朋友分兩批",mins:15,cat:"amber",priority:false,grp:"social",origNum:16},
+  {name:"啟發：呼召人來受洗，高雄市議會受洗的見證",mins:20,cat:"amber",priority:false,grp:"faith",origNum:17},
+  {name:"家裡的窗簾要換＋軟條購買",mins:15,cat:"amber",priority:false,grp:"home",origNum:18},
+  {name:"主日和晨禱可以變成簡報跟影片摘要",mins:20,cat:"amber",priority:false,grp:"faith",origNum:19},
+  {name:"去三蘆要固定帶腳踏車架，就可以在永德里下車",mins:5,cat:"green",priority:false,grp:"home",origNum:20},
+  {name:"去阿嬤家可以約漢仁和爸爸",mins:10,cat:"green",priority:false,grp:"social",origNum:21},
+  {name:"愛的存款：我覺得你今天或這週內最可愛的一點",mins:10,cat:"green",priority:false,grp:"social",origNum:22},
+  {name:"安裝電視架",mins:15,cat:"amber",priority:false,grp:"home",origNum:23},
+  {name:"挑選窗簾",mins:10,cat:"green",priority:false,grp:"home",origNum:24},
+  {name:"潔的時鐘放在廚房",mins:5,cat:"green",priority:false,grp:"home",origNum:25},
+  {name:"立志不用 X",mins:10,cat:"amber",priority:false,grp:"faith",origNum:26},
+  {name:"2033 異想寫下來",mins:15,cat:"amber",priority:false,grp:"faith",origNum:27},
 ];
 
-const API='https://script.google.com/macros/s/AKfycby76QenFGRUIJeA7wj-rX2MkmVLYRmEG7euRsIeCgDlHuFgnfkbadvAanJFSFwX2Z0T0Q/exec';
+const API='https://script.google.com/macros/s/AKfycbwDyiYJuzkmH5g0EnHJrilwYii9Kc0H-4YhWmPZzUwsoPGXJmJQ7PamKcwD83YjDZdM/exec';
 const CSV='https://docs.google.com/spreadsheets/d/10yGuvuAUTDg_MlpqhsjwoCZeEKaHE6D2FUwAakfatbc/export?format=csv&gid=0';
 let tasks=[],timers={},filt='all',dsUid=null,uc=0,bIdx=0,bSec=SW,bIv=null,bPaused=false,saveTimer=null,noteTimer=null;
 function uid(){return ++uc;}
@@ -308,6 +298,16 @@ function togElim(u){
   if(!t.eliminated){if(timers[u]){clearInterval(timers[u]);delete timers[u];}t.state='idle';}
   t.eliminated=!t.eliminated;save();render();
 }
+
+function startDrag(e,u){
+  const card=document.getElementById('cu'+u);
+  if(!card)return;
+  card.draggable=true;
+  card.addEventListener('dragend',function once(){
+    card.draggable=false;
+    card.removeEventListener('dragend',once);
+  });
+}
 function render(){
   // Don't re-render if a note input is focused (would disrupt typing)
   const focused=document.activeElement;
@@ -325,8 +325,8 @@ function render(){
     if(t.state==='running')cls+=' run';
     if(t.left===0&&!t.eliminated)cls+=' dn';
     if(t.eliminated)cls+=' eli';
-    card.className=cls;card.id='cu'+u;card.draggable=true;
-    card.addEventListener('dragstart',e=>{dsUid=u;card.classList.add('drg');e.dataTransfer.effectAllowed='move';});
+    card.className=cls;card.id='cu'+u;card.draggable=false;
+    card.addEventListener('dragstart',e=>{if(!card.draggable)return e.preventDefault();dsUid=u;card.classList.add('drg');e.dataTransfer.effectAllowed='move';});
     card.addEventListener('dragend',()=>{card.classList.remove('drg');document.querySelectorAll('.tc').forEach(c=>c.classList.remove('dov'));});
     card.addEventListener('dragover',e=>{e.preventDefault();document.querySelectorAll('.tc').forEach(c=>c.classList.remove('dov'));card.classList.add('dov');});
     card.addEventListener('dragleave',()=>card.classList.remove('dov'));
@@ -343,7 +343,7 @@ function render(){
     const gl=CM[t.grp]?CM[t.grp].label:'',gc=CM[t.grp]?CM[t.grp].cls:'';
     card.innerHTML=`
       <div class="mr">
-        <span class="dh">⠿</span>
+        <span class="dh" draggable="true" onmousedown="startDrag(event,${u})">⠿</span>
         <input class="ri" type="text" value="${t.rank||''}" placeholder="#" oninput="sRank(${u},this.value)" onclick="event.stopPropagation()" ondragstart="event.stopPropagation()">
         <div class="cb" style="background:${t.eliminated?'#ccc':CC[t.cat]};"></div>
         <div class="ti">
